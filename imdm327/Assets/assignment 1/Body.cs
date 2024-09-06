@@ -16,29 +16,29 @@ public class Body : MonoBehaviour
         rb.useGravity = false; // Disable Unity's gravity
     }
 
-    void FixedUpdate()
+    // Reset the acceleration to zero at the start of each frame
+    public void ResetAcceleration()
     {
-        // Update velocity based on acceleration
-        velocity += acceleration * Time.fixedDeltaTime;
-
-        // Apply the velocity to the Rigidbody
-        rb.velocity = velocity;
+        acceleration = Vector3.zero;
     }
 
     // Apply force to the body (this method calculates acceleration internally)
     public void ApplyForce(Vector3 force)
     {
-        // Use double for precision when dividing force by mass
         Vector3 preciseAcceleration = new Vector3(
             (float)((double)force.x / (double)rb.mass),
             (float)((double)force.y / (double)rb.mass),
             (float)((double)force.z / (double)rb.mass)
         );
-
-        Debug.Log(preciseAcceleration);
         acceleration += preciseAcceleration; // Apply the precise acceleration
     }
 
+    // Update the velocity based on the accumulated acceleration and apply it to the Rigidbody
+    public void UpdateVelocity(float deltaTime)
+    {
+        velocity += acceleration * deltaTime;
+        rb.velocity = velocity;
+    }
 
     // Set the velocity of the body
     public void SetVelocity(Vector3 newVelocity)

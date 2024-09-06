@@ -181,7 +181,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -346,8 +346,8 @@ MonoBehaviour:
   - {x: -1, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   masses:
-  - 10000000
-  - 20000
+  - 2
+  - 1
   - 8e+10
   bodyPrefab: {fileID: 3008536175760357434, guid: 33dcf062cb2387f42865f5d5d407f31f, type: 3}
 --- !u!4 &1823954268

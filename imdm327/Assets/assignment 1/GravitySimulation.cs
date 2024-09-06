@@ -43,6 +43,12 @@ public class GravitySimulation : MonoBehaviour
     {
         float deltaTime = Time.fixedDeltaTime;
 
+        // Reset acceleration for all bodies
+        foreach (Body body in bodies)
+        {
+         //   body.ResetAcceleration();
+        }
+
         // Iterate over all bodies and calculate gravitational forces
         for (int i = 0; i < bodies.Count; i++)
         {
@@ -54,9 +60,7 @@ public class GravitySimulation : MonoBehaviour
                 {
                     // Calculate the gravitational force between body i and body j
                     Vector3 force = PhysicsCalculations.CalculateGravitationalForce(bodies[i], bodies[j]);
-                    Debug.Log($"Force on body {i} from body {j}: {force}");
                     totalForce += force;
-
                 }
             }
 
@@ -64,8 +68,13 @@ public class GravitySimulation : MonoBehaviour
             bodies[i].ApplyForce(totalForce);
         }
 
-        // No need to manually update positions, as the Body class handles movement via Rigidbody
+        // Update velocities and apply them to the rigidbody
+        foreach (Body body in bodies)
+        {
+            body.UpdateVelocity(deltaTime);
+        }
     }
+
 
 
     // Restore the Gizmos for visualization
