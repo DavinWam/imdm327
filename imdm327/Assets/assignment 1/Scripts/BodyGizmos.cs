@@ -38,6 +38,10 @@ public class BodyDebug : MonoBehaviour
             for (int i = 0; i < bodies.Count; i++)
             {
                 projectedBodies.Add(new ProjectedBody(bodies[i]));
+                if(bodies[i].useEllipticalOrbit){
+                    projectedBodies[i].velocity = bodies[i].CalculateEllipticalOrbit();
+                }
+
                 drawPoints[i] = new Vector3[numSteps];
 
                 if (bodies[i] == Sun && relativeToSun)

@@ -112,9 +112,16 @@ public class Body : MonoBehaviour, IBody
         if (simulation.bodies == null || simulation.bodies.Count == 0)
         {
             Debug.LogWarning("No bodies available for elliptical orbit calculation.");
-            return;
+            return ;
         }
+        Vector3 totalAcceleration = CalculateEllipticalOrbit();
 
+        // Set the velocity based on the sum of all gravitational influences
+        initialVelocity = totalAcceleration;
+    }
+
+    public Vector3 CalculateEllipticalOrbit()
+    {
         Vector3 totalAcceleration = Vector3.zero;
         Vector3 position = transform.position;
         float G = GravitySimulation.G;
@@ -138,9 +145,6 @@ public class Body : MonoBehaviour, IBody
                 totalAcceleration += perpendicularDirection * velocityMagnitude;
             }
         }
-
-        // Set the velocity based on the sum of all gravitational influences
-        initialVelocity = totalAcceleration;
+        return totalAcceleration;
     }
-
 }
