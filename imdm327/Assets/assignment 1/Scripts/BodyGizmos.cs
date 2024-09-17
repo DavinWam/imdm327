@@ -8,9 +8,6 @@ using UnityEngine.Assertions.Must;
 public class BodyDebug : MonoBehaviour
 {
     public bool showForces = true; // Boolean flag to toggle gizmos
-    public bool relativeToSun;
-    public Body Sun;
-    public GravitySimulation simulation;
 
   
     void OnDrawGizmos()
