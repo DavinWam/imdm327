@@ -205,10 +205,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49fdc6e7b4b422544bf2ff1b4fbb5846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wave:
-    baseFrequency: 1211
-    volume: 0.037
-    quantizeToScale: 1
+  carrierWaves:
+  - baseFrequency: 1200
+    volume: 0.3
+    waveformType: 0
+    quantizeToScale: 0
+    selectedScale: 0
+    currentNote: 0
+  - baseFrequency: 800
+    volume: 0
+    waveformType: 0
+    quantizeToScale: 0
     selectedScale: 0
     currentNote: 0
   attackTime: 0.1
@@ -217,12 +224,6 @@ MonoBehaviour:
   releaseTime: 0.5
   playOnStart: 1
   noteOn: 0
-  onNoteOn:
-    m_PersistentCalls:
-      m_Calls: []
-  onNoteOff:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &780649896
 Transform:
   m_ObjectHideFlags: 0

@@ -3,16 +3,31 @@ using UnityEngine;
 [System.Serializable]
 public struct Wave
 {
-
     [Range(65, 5000)]
     public float baseFrequency; // The frequency of the wave
 
     [Range(0, 1)]
     public float volume; // The volume of the wave
 
+    public Waveform waveformType; // The type of waveform
+
     public bool quantizeToScale; // Whether to quantize the frequency to a musical scale
     public ScaleType selectedScale; // Allows selection between different scales
     public Note currentNote;
+
+    // Existing code for scales...
+
+    // Constructor for the Wave struct
+    public Wave(float baseFrequency, float volume, Waveform waveformType, bool quantizeToScale, ScaleType selectedScale)
+    {
+        this.baseFrequency = baseFrequency;
+        this.volume = volume;
+        this.waveformType = waveformType;
+        this.quantizeToScale = quantizeToScale;
+        this.selectedScale = selectedScale;
+        this.currentNote = Note.None;
+    }
+
 
     // Static major scale intervals (for a major scale starting from A)
     public static readonly float[] MajorScale = { 1.0f, 1.125f, 1.25f, 1.333f, 1.5f, 1.667f, 1.875f };
@@ -35,15 +50,6 @@ public struct Wave
         Note.G, Note.GSharp
     };
 
-    // Constructor for the Wave struct
-    public Wave(float baseFrequency, float volume, bool quantizeToScale, ScaleType selectedScale)
-    {
-        this.baseFrequency = baseFrequency;
-        this.volume = volume;
-        this.quantizeToScale = quantizeToScale;
-        this.selectedScale = selectedScale;
-        this.currentNote = Note.None;
-    }
 
     // Quantizes the input frequency to the closest note on the selected scale
     public float GetQuantizedFrequency()

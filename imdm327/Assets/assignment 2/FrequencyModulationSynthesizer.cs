@@ -1,33 +1,56 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-// Separate class for frequency modulation synthesis logic
 public class FrequencyModulationSynthesizer
 {
-    // Private variable to keep track of the time index
-    private int timeIndex = 0;
+    private double phase;
+    private double sampleRate;
 
-    // Function to process audio and apply synthesis
-    public void OnAudioFilterRead(float[] data, int channels, float frequency, float volume)
+    public FrequencyModulationSynthesizer()
     {
-        for (int i = 0; i < data.Length; i += channels)
+        sampleRate = AudioSettings.outputSampleRate;
+        phase = 0;
+    }
+
+    public void ResetPhase()
+    {
+        phase = 0;
+    }
+
+    // Generate the next sample based on the waveform type
+    private float GenerateWaveSample(Waveform waveformType, double frequency)
+    {
+        double increment = frequency * 2.0 * Mathf.PI / sampleRate;
+        phase += increment;
+
+        switch (waveformType)
         {
-            // Generate sine wave
-            data[i] = CreateSine(timeIndex, frequency, 44100, volume);
+            case Waveform.Sine:
+                return Mathf.Sin((float)phase);
 
-            // Clone the sine wave to the second audio channel for stereo output
-            if (channels == 2)
-                data[i + 1] = data[i];
+            case Waveform.Square:
+                return Mathf.Sign(Mathf.Sin((float)phase));
 
-            // Increment the time index for the next sample
-            timeIndex++;
+            case Waveform.Sawtooth:
+                return (float)((phase / Mathf.PI) % 2.0 - 1.0);
+
+            case Waveform.Triangle:
+                return Mathf.PingPong((float)(phase / Mathf.PI), 2.0f) - 1.0f;
+
+            default:
+                return 0;
         }
     }
 
-    // Function to create a sine wave with the specified parameters
-    public float CreateSine(int timeIndex, float frequency, float sampleRate, float volume)
+    public void OnAudioFilterRead(float[] data, int channels, float frequency, float amplitude, Waveform waveformType)
     {
-        return Mathf.Sin(2 * Mathf.PI * timeIndex * frequency / sampleRate) * volume;
+        for (int i = 0; i < data.Length; i += channels)
+        {
+            float sample = GenerateWaveSample(waveformType, frequency) * amplitude;
+
+            for (int channel = 0; channel < channels; channel++)
+            {
+                data[i + channel] = sample;
+            }
+        }
     }
 }

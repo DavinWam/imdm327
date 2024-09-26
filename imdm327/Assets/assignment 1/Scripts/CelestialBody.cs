@@ -5,7 +5,7 @@ using UnityEngine;
 public class CelestialBody : Body
 {
         // Main body for orbit calculations
-    public Body mainBody;
+    public CelestialBody mainBody;
     public bool useEllipticalOrbit; // Toggle for using elliptical orbit calculation
     public GravitySimulation simulation;
     // Start is called before the first frame update
@@ -28,12 +28,12 @@ public class CelestialBody : Body
     {
         Vector3 totalAcceleration = Vector3.zero;
 
-        foreach (Body otherBody in simulation.bodies)
+        foreach (CelestialBody otherBody in simulation.bodies)
         {
             if (otherBody != this)
             {
                 // Calculate the gravitational force between this body and the other body
-                Vector3 acceleration = PhysicsCalculations<Body>.CalculateGravitionalPull(this, otherBody, gravitationalConstant);
+                Vector3 acceleration = PhysicsCalculations<CelestialBody>.CalculateGravitionalPull(this, otherBody, gravitationalConstant);
                 totalAcceleration += acceleration;
             }
         }
@@ -65,7 +65,7 @@ public class CelestialBody : Body
         float G = GravitySimulation.G;
 
         // Iterate over all bodies in the simulation
-        foreach (Body otherBody in simulation.bodies)
+        foreach (CelestialBody otherBody in simulation.bodies)
         {
             if (otherBody != this) // Exclude the current body
             {

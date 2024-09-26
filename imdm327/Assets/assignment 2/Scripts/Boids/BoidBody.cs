@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class BoidAgent : MonoBehaviour
+public class BoidBody : MonoBehaviour
 {
     public Vector3 Velocity { get; private set; }
     public float MaxSpeed = 5.0f;
+
 
     public void Initialize(Vector3 initialVelocity)
     {

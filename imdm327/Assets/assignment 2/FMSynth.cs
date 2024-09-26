@@ -1,69 +1,85 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
 public class FMSynth : MonoBehaviour
 {
-    public Wave wave; // The wave used by the FMSynth
+    public Wave[] carrierWaves; // Array of carrier waves
 
     // Envelope parameters
-    public float attackTime = 0.1f; // Time to reach full volume
-    public float decayTime = 0.2f;  // Time to decay to sustain level
+    public float attackTime = 0.1f;
+    public float decayTime = 0.2f;
     [Range(0, 1)]
-    public float sustainLevel = 0.7f; // Level during sustain phase
-    public float releaseTime = 0.5f;  // Time to fade out
+    public float sustainLevel = 0.7f;
+    public float releaseTime = 0.5f;
 
-    public bool playOnStart = true; // Play on start boolean
+    public bool playOnStart = true;
 
-    private float envelopeVolume = 0; // Envelope volume over time
-    private float timeSinceNoteOn = 0; // Time since the note started
-    public bool noteOn = false;       // Keeps track of whether the note is on
-
-    // Unity Events for NoteOn and NoteOff
-    public UnityEvent onNoteOn;
-    public UnityEvent onNoteOff;
+    private float envelopeVolume = 0;
+    private float timeSinceNoteOn = 0;
+    public bool noteOn = false;
 
     // Reference to the FM Synth class
-    private FrequencyModulationSynthesizer fmSynth;
+    private FrequencyModulationSynthesizer[] fmSynths;
 
-    // Initialize FM Synthesizer and the wave
     void Start()
     {
-        fmSynth = new FrequencyModulationSynthesizer();
+        // Initialize the array of synthesizers
+        fmSynths = new FrequencyModulationSynthesizer[carrierWaves.Length];
+        for (int i = 0; i < carrierWaves.Length; i++)
+        {
+            fmSynths[i] = new FrequencyModulationSynthesizer();
+        }
 
-        // Play the note on start if playOnStart is true
         if (playOnStart)
         {
             NoteOn();
         }
     }
 
-    // Update is called once per frame and handles envelope processing on the main thread
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) // Press space to play a note
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             NoteOn();
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)) // Release space to stop the note
+        if (Input.GetKeyUp(KeyCode.Space))
         {
             NoteOff();
         }
-        // Process the envelope on the main thread, using Time.deltaTime
+
         ProcessEnvelope(Time.deltaTime);
     }
 
-    // OnAudioFilterRead is called by Unity's audio system when generating the audio data
     void OnAudioFilterRead(float[] data, int channels)
     {
-        // Get the quantized frequency from the wave
-        float outputFrequency = wave.GetQuantizedFrequency();
+        System.Array.Clear(data, 0, data.Length);
+        float[] tempData = new float[data.Length];
 
-        // Generate the audio data with quantized frequency and apply the envelope
-        fmSynth.OnAudioFilterRead(data, channels, outputFrequency, wave.volume * envelopeVolume);
+        for (int i = 0; i < carrierWaves.Length; i++)
+        {
+            Wave wave = carrierWaves[i];
+            FrequencyModulationSynthesizer synth = fmSynths[i];
+
+            float outputFrequency = wave.GetQuantizedFrequency();
+            System.Array.Clear(tempData, 0, tempData.Length);
+
+            synth.OnAudioFilterRead(tempData, channels, outputFrequency, wave.volume * envelopeVolume, wave.waveformType);
+
+            for (int j = 0; j < data.Length; j++)
+            {
+                data[j] += tempData[j];
+            }
+        }
+
+        // Prevent clipping
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = Mathf.Clamp(data[i], -1f, 1f);
+        }
     }
 
-    // Process the ADSR envelope over time
     void ProcessEnvelope(float deltaTime)
     {
         if (noteOn)
@@ -72,24 +88,20 @@ public class FMSynth : MonoBehaviour
 
             if (timeSinceNoteOn <= attackTime)
             {
-                // Attack phase: increase volume to 1.0
                 envelopeVolume = Mathf.Lerp(0, 1, timeSinceNoteOn / attackTime);
             }
             else if (timeSinceNoteOn <= attackTime + decayTime)
             {
-                // Decay phase: decrease volume to sustain level
                 float decayProgress = (timeSinceNoteOn - attackTime) / decayTime;
                 envelopeVolume = Mathf.Lerp(1, sustainLevel, decayProgress);
             }
             else
             {
-                // Sustain phase: maintain sustain level
                 envelopeVolume = sustainLevel;
             }
         }
         else
         {
-            // Release phase: decrease volume to 0
             envelopeVolume -= deltaTime / releaseTime;
             if (envelopeVolume < 0)
             {
@@ -98,21 +110,24 @@ public class FMSynth : MonoBehaviour
         }
     }
 
-    // Call this to stop the note and trigger the release phase
     public void NoteOff()
     {
         noteOn = false;
-        onNoteOff?.Invoke(); // Trigger the UnityEvent for NoteOff
     }
 
-    // Call this to trigger the note on (attack phase)
     public void NoteOn()
     {
-        if(noteOn){
+        if (noteOn)
+        {
             NoteOff();
         }
         noteOn = true;
         timeSinceNoteOn = 0;
-        onNoteOn?.Invoke(); // Trigger the UnityEvent for NoteOn
+
+        // Reset phases
+        foreach (var synth in fmSynths)
+        {
+            synth.ResetPhase();
+        }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoidManager : MonoBehaviour
+public class BoidSpawner : MonoBehaviour
 {
     public GameObject BoidPrefab;
     public int BoidCount = 100;
@@ -14,7 +14,7 @@ public class BoidManager : MonoBehaviour
     public float ContainmentStrength = 2.0f; // Strength of the containment force
 
     [HideInInspector]
-    public List<BoidAgent> Boids = new List<BoidAgent>();
+    public List<BoidBody> Boids = new List<BoidBody>();
 
     void Start()
     {
@@ -28,7 +28,7 @@ public class BoidManager : MonoBehaviour
             Vector3 spawnPosition = transform.position + Random.insideUnitSphere * SpawnRadius;
             GameObject boidObject = Instantiate(BoidPrefab, spawnPosition, Quaternion.identity);
 
-            BoidAgent agent = boidObject.GetComponent<BoidAgent>();
+            BoidBody agent = boidObject.GetComponent<BoidBody>();
             Vector3 initialVelocity = Random.insideUnitSphere.normalized * StartingSpeed;
             agent.Initialize(initialVelocity);
 

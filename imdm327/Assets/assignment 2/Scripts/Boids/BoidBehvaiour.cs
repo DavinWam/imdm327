@@ -6,13 +6,13 @@ public class BoidBehavior : MonoBehaviour
     // Reference to the BoidSettings ScriptableObject
     public BoidSettings settings;
 
-    private BoidAgent agent;
-    private BoidManager manager;
+    private BoidBody agent;
+    private BoidSpawner spawner;
 
     void Start()
     {
-        agent = GetComponent<BoidAgent>();
-        manager = FindObjectOfType<BoidManager>();
+        agent = GetComponent<BoidBody>();
+        spawner = FindObjectOfType<BoidSpawner>();
 
         // Apply settings to the agent
         agent.MaxSpeed = settings.MaxSpeed;
@@ -48,7 +48,7 @@ public class BoidBehavior : MonoBehaviour
         }
 
         // If you have a containment force, you can include it as well
-        Vector3 containment = CalculateContainment() * manager.ContainmentStrength;
+        Vector3 containment = CalculateContainment() * spawner.ContainmentStrength;
         steeringForce += containment;
 
         return steeringForce;
@@ -60,7 +60,7 @@ public class BoidBehavior : MonoBehaviour
         Vector3 steering = Vector3.zero;
         int count = 0;
 
-        foreach (BoidAgent other in manager.Boids)
+        foreach (BoidBody other in spawner.Boids)
         {
             if (other != agent)
             {
@@ -89,7 +89,7 @@ public class BoidBehavior : MonoBehaviour
         Vector3 averageVelocity = Vector3.zero;
         int count = 0;
 
-        foreach (BoidAgent other in manager.Boids)
+        foreach (BoidBody other in spawner.Boids)
         {
             if (other != agent)
             {
@@ -119,7 +119,7 @@ public class BoidBehavior : MonoBehaviour
         Vector3 centerOfMass = Vector3.zero;
         int count = 0;
 
-        foreach (BoidAgent other in manager.Boids)
+        foreach (BoidBody other in spawner.Boids)
         {
             if (other != agent)
             {
@@ -147,12 +147,12 @@ private Vector3 CalculateContainment()
 {
     Vector3 steering = Vector3.zero;
     Vector3 position = agent.transform.position;
-    Vector3 halfBounds = manager.SimulationBounds / 2;
-    Vector3 center = manager.transform.position; // Assuming the center is at the manager's position
+    Vector3 halfBounds = spawner.SimulationBounds / 2;
+    Vector3 center = spawner.transform.position; // Assuming the center is at the manager's position
 
     // X-axis containment
     float distanceX = Mathf.Abs(position.x - center.x);
-    if (distanceX > halfBounds.x - manager.ContainmentThreshold)
+    if (distanceX > halfBounds.x - spawner.ContainmentThreshold)
     {
         float directionX = center.x - position.x;
         steering.x = directionX;
@@ -160,7 +160,7 @@ private Vector3 CalculateContainment()
 
     // Y-axis containment
     float distanceY = Mathf.Abs(position.y - center.y);
-    if (distanceY > halfBounds.y - manager.ContainmentThreshold)
+    if (distanceY > halfBounds.y - spawner.ContainmentThreshold)
     {
         float directionY = center.y - position.y;
         steering.y = directionY;
@@ -168,7 +168,7 @@ private Vector3 CalculateContainment()
 
     // Z-axis containment
     float distanceZ = Mathf.Abs(position.z - center.z);
-    if (distanceZ > halfBounds.z - manager.ContainmentThreshold)
+    if (distanceZ > halfBounds.z - spawner.ContainmentThreshold)
     {
         float directionZ = center.z - position.z;
         steering.z = directionZ;
