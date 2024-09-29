@@ -5,7 +5,7 @@ using UnityEngine;
 public class GravitySimulation : MonoBehaviour
 {
 
-    public List<Body> bodies = new List<Body>();
+    public List<CelestialBody> bodies = new List<CelestialBody>();
     public const float G = 0.0001f;
     public const float physicsTimeStep = 0.01f;
 
@@ -16,11 +16,11 @@ public class GravitySimulation : MonoBehaviour
     void FixedUpdate()
     {
         // First loop: Each body calculates its forces from other bodies and updates its velocity
-        foreach (Body body in bodies)
+        foreach (CelestialBody body in bodies)
         {
             body.CalculateAcceleration(G); // Calculate all forces acting on the body
         }
-        foreach (Body body in bodies)
+        foreach (CelestialBody body in bodies)
         {
             body.UpdatePosition(); 
         }

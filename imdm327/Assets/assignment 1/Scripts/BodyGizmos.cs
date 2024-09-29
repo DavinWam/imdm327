@@ -15,10 +15,10 @@ public class BodyDebug : MonoBehaviour
         if (!showForces) return; // Exit if gizmos are turned off
 
         // Find all bodies in the scene
-        Body[] allBodies = FindObjectsOfType<Body>();
+        CelestialBody[] allBodies = FindObjectsOfType<CelestialBody>();
 
         // Draw velocity and acceleration vectors for each body
-        foreach (Body body in allBodies)
+        foreach (CelestialBody body in allBodies)
         {
             if (body != null)
             {
