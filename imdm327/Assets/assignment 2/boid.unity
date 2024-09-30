@@ -132,13 +132,14 @@ GameObject:
   m_Component:
   - component: {fileID: 715261723}
   - component: {fileID: 715261724}
+  - component: {fileID: 715261725}
   m_Layer: 0
   m_Name: Simulation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &715261723
 Transform:
   m_ObjectHideFlags: 0
@@ -175,6 +176,24 @@ MonoBehaviour:
   ContainmentThreshold: 3
   ContainmentStrength: 10
   Boids: []
+--- !u!114 &715261725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715261721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c8133873c265614d944ca9dd61748e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  padSynth1: {fileID: 780649895}
+  padSynth2: {fileID: 0}
+  gongSynth: {fileID: 0}
+  oboeSynth: {fileID: 0}
+  clusteringSeparationThreshold: 2
+  directionChangeThreshold: 30
 --- !u!1 &780649894
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,8 +205,10 @@ GameObject:
   - component: {fileID: 780649896}
   - component: {fileID: 780649895}
   - component: {fileID: 780649897}
+  - component: {fileID: 780649899}
+  - component: {fileID: 780649898}
   m_Layer: 0
-  m_Name: FMSynth
+  m_Name: FMSynth_Pad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -206,22 +227,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   operators:
-  - baseFrequency: 800
+  - baseFrequency: 440
+    frequencyMultiplier: 1
+    volume: 0.15
+    waveformType: 3
+    quantizeToScale: 1
+    modulatorIndex: 0
+    modulationDepth: 0
+    isCarrier: 0
+  - baseFrequency: 440
     frequencyMultiplier: 1
     volume: 1
     waveformType: 0
     quantizeToScale: 1
     modulatorIndex: 0
-    modulationDepth: 0
-    isCarrier: 0
-  - baseFrequency: 800
-    frequencyMultiplier: 1
-    volume: 0.3
-    waveformType: 0
-    quantizeToScale: 1
-    modulatorIndex: 0
-    modulationDepth: 500
+    modulationDepth: 196
     isCarrier: 1
+  duration: 8
   attackTime: 0.1
   decayTime: 0.2
   sustainLevel: 0.7
@@ -339,6 +361,54 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!169 &780649898
+AudioLowPassFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780649894}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_LowpassResonanceQ: 1
+  lowpassLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.22727273
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!164 &780649899
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780649894}
+  m_Enabled: 1
+  m_DryLevel: 0
+  m_Room: -1000
+  m_RoomHF: -500
+  m_DecayTime: 3.92
+  m_DecayHFRatio: 0.7
+  m_ReflectionsLevel: -1230
+  m_ReverbLevel: -2
+  m_ReverbDelay: 0.029
+  m_Diffusion: 100
+  m_Density: 100
+  m_HFReference: 5000
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 8
 --- !u!1 &850923361
 GameObject:
   m_ObjectHideFlags: 0

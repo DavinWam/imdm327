@@ -3,7 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public struct Operator
 {
-    [Range(65, 5000)]
+    [Range(1, 5000)]
     public float baseFrequency; // Base frequency of the operator
 
     public float frequencyMultiplier; // Frequency multiplier
@@ -48,7 +48,7 @@ public struct Operator
         }
 
         // Calculate the number of semitones from A4 (440 Hz)
-        float semitonesFromA4 = 12f * Mathf.Log(baseFrequency*frequencyMultiplier / 440f, 2f);
+        float semitonesFromA4 = 12f * Mathf.Log(baseFrequency * frequencyMultiplier / 440f, 2f);
         int nearestSemitone = Mathf.RoundToInt(semitonesFromA4);
 
         // Calculate the quantized frequency
@@ -61,11 +61,9 @@ public struct Operator
         return quantizedFrequency;
     }
 
-
     public static readonly ENote[] TwelveToneScaleNotes = {
         ENote.A, ENote.ASharp, ENote.B, ENote.C, ENote.CSharp,
         ENote.D, ENote.DSharp, ENote.E, ENote.F, ENote.FSharp,
         ENote.G, ENote.GSharp
     };
-
 }

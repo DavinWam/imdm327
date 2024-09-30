@@ -86,7 +86,7 @@ public class FMSynth : MonoBehaviour
                 }
 
                 // Generate sample with modulation
-                float amplitude = op.isCarrier ? op.volume * envelopeVolume : 1.0f;
+                float amplitude = op.volume * envelopeVolume;
                 float sample = generator.GenerateSample(frequency, amplitude, op.waveformType, modulation);
 
                 // Store output for modulators to use
