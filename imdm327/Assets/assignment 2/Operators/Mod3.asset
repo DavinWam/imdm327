@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04fd74e8afced6043ba239b2a01429d8, type: 3}
+  m_Name: Mod3
+  m_EditorClassIdentifier: 
+  baseFrequency: 266
+  frequencyMultiplier: 1
+  volume: 1
+  waveformType: 2
+  quantizeToScale: 0
+  modulator: {fileID: 0}
+  modulationDepth: 80
+  ChorusEffect: 0
+  UseLFO: 0
+  lfoFrequency: 5
+  customLfoWaveformCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

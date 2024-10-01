@@ -35,8 +35,12 @@ public class FMSynth : MonoBehaviour
     // Cached sample rate
     private float sampleRate;
 
+  public BoidSoundManager boidSoundManager;
+
     void Awake()
     {
+        // Assuming BoidSoundManager is on the same GameObject
+
         sampleRate = AudioSettings.outputSampleRate;
 
         if (playOnStart)
@@ -44,7 +48,6 @@ public class FMSynth : MonoBehaviour
             NoteOn();
         }
     }
-
 
     private void OnAudioFilterRead(float[] data, int channels)
     {
@@ -54,6 +57,9 @@ public class FMSynth : MonoBehaviour
         }
 
         Operator mainOperator = operators[0];
+
+        // Get the active synth count from BoidSoundManager
+        int activeSynthCount = boidSoundManager != null ? boidSoundManager.GetActiveSynthCount() : 1;
 
         for (int sample = 0; sample < data.Length; sample += channels)
         {
@@ -69,12 +75,11 @@ public class FMSynth : MonoBehaviour
             // Assign the sample value to all channels (stereo/mono)
             for (int channel = 0; channel < channels; channel++)
             {
-                data[sample + channel] += sampleValue/2;
-                
+                data[sample + channel] += sampleValue / activeSynthCount; // Dynamic mixing
+                data[sample + channel] = Mathf.Clamp(data[sample + channel], -1.0f, 1.0f);
             }
         }
     }
-
 
     void Update()
     {

@@ -78,11 +78,12 @@ public class Operator : ScriptableObject
         return quantizedFrequency;
     }
 
-    public static readonly ENote[] TwelveToneScaleNotes = {
-        ENote.A, ENote.ASharp, ENote.B, ENote.C, ENote.CSharp,
-        ENote.D, ENote.DSharp, ENote.E, ENote.F, ENote.FSharp,
-        ENote.G, ENote.GSharp
-    };
+public static readonly ENote[] TwelveToneScaleNotes = {
+    ENote.A, ENote.BFlat, ENote.B, ENote.C, ENote.DFlat,
+    ENote.D, ENote.EFlat, ENote.E, ENote.F, ENote.GFlat,
+    ENote.G, ENote.AFlat
+};
+
 
 
     // Function to get the frequency sample value for the operator
