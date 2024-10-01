@@ -1,10 +1,23 @@
+using TMPro;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class FMSynth : MonoBehaviour
 {
+    private enum EnvelopeState
+    {
+        Idle,
+        Attack,
+        Decay,
+        Sustain,
+        Release
+    }
+
     public Operator[] operators; // Array of operators (carriers and modulators)
+    public Modulator[] modulators; // Array of operators (carriers and modulators)
     public float duration = 2.0f; // Duration in seconds
- 
+
     // Envelope parameters
     public float attackTime = 0.1f;
     public float decayTime = 0.2f;
@@ -13,28 +26,55 @@ public class FMSynth : MonoBehaviour
     public float releaseTime = 0.5f;
 
     public bool playOnStart = true;
-
-    private float envelopeVolume = 0;
-    private float timeSinceNoteOn = 0;
     public bool noteOn = false;
-    private float noteDurationTimer = 0f;
+    // Envelope state tracking
+    private EnvelopeState envelopeState = EnvelopeState.Idle;
+    private float envelopeTime = 0f;
+    private float currentAmplitude = 0f;
 
-    private WaveGenerator[] waveGenerators;
+    // Cached sample rate
+    private float sampleRate;
 
-    void Start()
+    void Awake()
     {
-        // Initialize the array of wave generators
-        waveGenerators = new WaveGenerator[operators.Length];
-        for (int i = 0; i < operators.Length; i++)
-        {
-            waveGenerators[i] = new WaveGenerator();
-        }
+        sampleRate = AudioSettings.outputSampleRate;
 
         if (playOnStart)
         {
             NoteOn();
         }
     }
+
+
+    private void OnAudioFilterRead(float[] data, int channels)
+    {
+        if (operators == null || operators.Length == 0)
+        {
+            return;
+        }
+
+        Operator mainOperator = operators[0];
+
+        for (int sample = 0; sample < data.Length; sample += channels)
+        {
+            // Update envelope
+            UpdateEnvelope();
+
+            // Generate the next sample for the current operator
+            float sampleValue = mainOperator.GetFrequencySampleValue();
+
+            // Apply the envelope to the sample
+            sampleValue *= currentAmplitude;
+
+            // Assign the sample value to all channels (stereo/mono)
+            for (int channel = 0; channel < channels; channel++)
+            {
+                data[sample + channel] += sampleValue/2;
+                
+            }
+        }
+    }
+
 
     void Update()
     {
@@ -48,127 +88,73 @@ public class FMSynth : MonoBehaviour
             NoteOff();
         }
 
-        ProcessEnvelope(Time.deltaTime);
+
     }
 
-    void OnAudioFilterRead(float[] data, int channels)
+    private void UpdateEnvelope()
     {
-        int sampleCount = data.Length / channels;
-
-        // Arrays to keep track of operator outputs
-        float[] operatorOutputs = new float[operators.Length];
-
-        // Initialize data array
-        System.Array.Clear(data, 0, data.Length);
- 
-        // For each sample
-        for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++)
+        switch (envelopeState)
         {
-            // Process each operator
-            for (int opIndex = 0; opIndex < operators.Length; opIndex++)
-            {
-                // Use ref to get a reference to the original Operator
-                ref Operator op = ref operators[opIndex];
-                WaveGenerator generator = waveGenerators[opIndex];
-                float modulationDepth = op.modulationDepth;
+            case EnvelopeState.Idle:
+                currentAmplitude = 0f;
+                break;
 
-                // Get base frequency and apply frequency multiplier
-                float baseFreq = op.GetQuantizedFrequency();
-                double frequency = baseFreq * op.frequencyMultiplier;
-
-                // Calculate modulation from modulator
-                double modulation = 0;
-
-                // Get modulation from the assigned modulator
-                if (op.modulatorIndex >= 0 && op.modulatorIndex < operators.Length)
+            case EnvelopeState.Attack:
+                envelopeTime += 1f / sampleRate;
+                currentAmplitude = Mathf.Clamp01(envelopeTime / attackTime);
+                if (envelopeTime >= attackTime)
                 {
-                    modulation = operatorOutputs[op.modulatorIndex] * modulationDepth;
+                    envelopeState = EnvelopeState.Decay;
+                    envelopeTime = 0f;
                 }
+                break;
 
-                // Generate sample with modulation
-                float amplitude = op.volume * envelopeVolume;
-                float sample = generator.GenerateSample(frequency, amplitude, op.waveformType, modulation);
-
-                // Store output for modulators to use
-                operatorOutputs[opIndex] = sample;
-
-                // If this operator is a carrier, add its output to the data buffer
-                if (op.isCarrier)
+            case EnvelopeState.Decay:
+                envelopeTime += 1f / sampleRate;
+                currentAmplitude = Mathf.Lerp(1f, sustainLevel, envelopeTime / decayTime);
+                if (envelopeTime >= decayTime)
                 {
-                    float outputSample = sample;
-
-                    for (int channel = 0; channel < channels; channel++)
-                    {
-                        data[sampleIndex * channels + channel] += outputSample;
-                    }
+                    envelopeState = EnvelopeState.Sustain;
+                    envelopeTime = 0f;
                 }
-            }
-        }
+                break;
 
-        // Prevent clipping
-        for (int i = 0; i < data.Length; i++)
-        {
-            data[i] = Mathf.Clamp(data[i], -1f, 1f);
-        }
-    }
+            case EnvelopeState.Sustain:
+                currentAmplitude = sustainLevel;
+                break;
 
-    void ProcessEnvelope(float deltaTime)
-    {
-        if (noteOn)
-        {
-            timeSinceNoteOn += deltaTime;
-            noteDurationTimer -= deltaTime;
-
-            if (noteDurationTimer <= 0)
-            {
-                NoteOff();
-            }
-
-            if (timeSinceNoteOn <= attackTime)
-            {
-                envelopeVolume = Mathf.Lerp(0, 1, timeSinceNoteOn / attackTime);
-            }
-            else if (timeSinceNoteOn <= attackTime + decayTime)
-            {
-                float decayProgress = (timeSinceNoteOn - attackTime) / decayTime;
-                envelopeVolume = Mathf.Lerp(1, sustainLevel, decayProgress);
-            }
-            else
-            {
-                envelopeVolume = sustainLevel;
-            }
-        }
-        else
-        {
-            envelopeVolume -= deltaTime / releaseTime;
-            if (envelopeVolume < 0)
-            {
-                envelopeVolume = 0;
-            }
+            case EnvelopeState.Release:
+                envelopeTime += 1f / sampleRate;
+                currentAmplitude = Mathf.Lerp(currentAmplitude, 0f, envelopeTime / releaseTime);
+                if (envelopeTime >= releaseTime)
+                {
+                    envelopeState = EnvelopeState.Idle;
+                    envelopeTime = 0f;
+                    currentAmplitude = 0f;
+                }
+                break;
         }
     }
 
 
-    public void NoteOff()
-    {
-        noteOn = false;
-    }
 
     public void NoteOn()
     {
-        if (noteOn)
-        {
-            NoteOff();
-        }
+        // If a note is already on, restart the envelope
+        envelopeState = EnvelopeState.Attack;
+        envelopeTime = 0f;
         noteOn = true;
-        timeSinceNoteOn = 0;
-        noteDurationTimer = duration; // Reset the duration timer
-
-        // Reset phases
-        foreach (var generator in waveGenerators)
-        {
-            generator.ResetPhase();
-        }
     }
+
+    public void NoteOff()
+    {
+        if (envelopeState != EnvelopeState.Idle && envelopeState != EnvelopeState.Release)
+        {
+            envelopeState = EnvelopeState.Release;
+            envelopeTime = 0f;
+        }
+        noteOn = false;
+    }
+
 
 }
