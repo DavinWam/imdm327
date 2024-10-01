@@ -27,6 +27,7 @@ public class FMSynth : MonoBehaviour
 
     public bool playOnStart = true;
     public bool noteOn = false;
+    public bool isActive = false; // Formal active/inactive state
     // Envelope state tracking
     private EnvelopeState envelopeState = EnvelopeState.Idle;
     private float envelopeTime = 0f;
@@ -49,9 +50,9 @@ public class FMSynth : MonoBehaviour
         }
     }
 
-    private void OnAudioFilterRead(float[] data, int channels)
+ private void OnAudioFilterRead(float[] data, int channels)
     {
-        if (operators == null || operators.Length == 0)
+        if (operators == null || operators.Length == 0 || !isActive)
         {
             return;
         }

@@ -8,6 +8,9 @@ public class BoidSoundManager : MonoBehaviour
     public FMSynth halfNoteSynth;   // Public synth for half notes
     public FMSynth quarterNoteSynth; // Public synth for quarter notes
     public FMSynth eighthNoteSynth;  // Public synth for eighth notes
+    public float halfNoteThreshold = 1.0f;    // Threshold for turning off half notes
+    public float quarterNoteThreshold = 2.0f; // Threshold for turning off quarter notes
+    public float eighthNoteThreshold = 3.0f;  // Threshold for turning off eighth notes
     public int bpm = 120; // Beats per minute (set the BPM)
 
     private BoidSpawner spawner;
@@ -75,13 +78,26 @@ public class BoidSoundManager : MonoBehaviour
     {
         int activeSynthCount = 0;
 
-        if (wholeNoteSynth != null && wholeNoteSynth.noteOn) activeSynthCount++;
-        if (halfNoteSynth != null && halfNoteSynth.noteOn) activeSynthCount++;
-        if (quarterNoteSynth != null && quarterNoteSynth.noteOn) activeSynthCount++;
-        if (eighthNoteSynth != null && eighthNoteSynth.noteOn) activeSynthCount++;
+        // Check whole note synth: both isActive and noteOn must be true
+        if (wholeNoteSynth != null && wholeNoteSynth.isActive && wholeNoteSynth.noteOn)
+            activeSynthCount++;
 
-        return Mathf.Max(1, activeSynthCount); // Ensure the divisor is at least 1 to avoid division by 0
+        // Check half note synth: both isActive and noteOn must be true
+        if (halfNoteSynth != null && halfNoteSynth.isActive && halfNoteSynth.noteOn)
+            activeSynthCount++;
+
+        // Check quarter note synth: both isActive and noteOn must be true
+        if (quarterNoteSynth != null && quarterNoteSynth.isActive && quarterNoteSynth.noteOn)
+            activeSynthCount++;
+
+        // Check eighth note synth: both isActive and noteOn must be true
+        if (eighthNoteSynth != null && eighthNoteSynth.isActive && eighthNoteSynth.noteOn)
+            activeSynthCount++;
+
+        // Ensure at least 1 active synth is counted to avoid division by 0
+        return Mathf.Max(1, activeSynthCount);
     }
+
     // Calculate the duration of an 8th note based on the BPM
     float CalculateEighthNoteDuration()
     {
@@ -153,18 +169,92 @@ public class BoidSoundManager : MonoBehaviour
         }
     }
 
-
+    float separationWeight = 1.0f;
+    float velocityWeight = 0.5f;
+    float alignmentWeight = 0.75f;
+    float accelerationWeight = 0.6f;
     void Update()
     {
-        if (spawner == null || wholeNoteSynth == null || halfNoteSynth == null || quarterNoteSynth == null || eighthNoteSynth == null) return;
+        if (spawner == null) return;
 
-        // Calculate simulation metrics
-        float averageSeparation = CalculateAverageSeparation();
-        float averageVelocity = CalculateAverageVelocity();
-
-        // (Optional) Use averageSeparation and averageVelocity to influence sound parameters
+        // Calculate current tension based on the boid simulation metrics
+        float tension = CalculateTension();
+        Debug.Log("t: "+ tension);
+        // Dynamically set the synth volume or mark them active/inactive based on tension
+        SetSynthActivityBasedOnTension(tension);
     }
 
+    // Dynamically adjust synth activity based on tension
+    void SetSynthActivityBasedOnTension(float tension)
+    {
+        // Whole note synth is always active
+        if (wholeNoteSynth != null)
+        {
+            wholeNoteSynth.isActive = true;
+        }
+
+        // Activate or deactivate half note synth based on tension
+        if (halfNoteSynth != null)
+        {
+            halfNoteSynth.isActive = tension >= halfNoteThreshold;
+        }
+
+        // Activate or deactivate quarter note synth based on tension
+        if (quarterNoteSynth != null)
+        {
+            quarterNoteSynth.isActive = tension >= quarterNoteThreshold;
+        }
+
+        // Activate or deactivate eighth note synth based on tension
+        if (eighthNoteSynth != null)
+        {
+            eighthNoteSynth.isActive = tension >= eighthNoteThreshold;
+        }
+    }
+    float CalculateTension()
+    {
+        float averageSeparation = CalculateAverageSeparation(); // Higher separation increases tension
+        float averageVelocity = CalculateAverageVelocity(); // Higher velocity contributes to tension
+        float alignment = CalculateAlignment(); // Low alignment increases tension
+        float acceleration = CalculateAverageAcceleration(); // Rapid changes contribute to tension
+
+        // Combine these metrics into a single tension value
+        // You can weight these values depending on how important each factor is
+        float tension =
+            (averageSeparation * separationWeight) +
+            (averageVelocity * velocityWeight) +
+            ((1f - alignment) * alignmentWeight) +  // Less alignment adds to tension
+            (acceleration * accelerationWeight);
+
+        return tension;
+    }
+    float CalculateAlignment()
+    {
+        Vector3 averageDirection = Vector3.zero;
+        foreach (var boid in spawner.Boids)
+        {
+            averageDirection += boid.Velocity.normalized; // Sum normalized velocities
+        }
+
+        if (spawner.Boids.Count > 0)
+        {
+            averageDirection /= spawner.Boids.Count;
+        }
+
+        // Return the magnitude of the average direction vector as a measure of alignment
+        return averageDirection.magnitude;
+    }
+
+    float CalculateAverageAcceleration()
+    {
+        float totalAcceleration = 0f;
+        foreach (var boid in spawner.Boids)
+        {
+            totalAcceleration += (boid.Velocity - boid.PreviousVelocity).magnitude;
+        }
+
+        return totalAcceleration / spawner.Boids.Count;
+    }
 
     // Calculates the average separation distance between all pairs of boids
     float CalculateAverageSeparation()
