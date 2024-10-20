@@ -421,9 +421,9 @@ MonoBehaviour:
   halfNoteSynth: {fileID: 618818727}
   quarterNoteSynth: {fileID: 587595977}
   eighthNoteSynth: {fileID: 256452747}
-  halfNoteThreshold: 1
-  quarterNoteThreshold: 2
-  eighthNoteThreshold: 3
+  halfNoteThreshold: 16
+  quarterNoteThreshold: 18
+  eighthNoteThreshold: 19
   bpm: 120
 --- !u!114 &780649895 stripped
 MonoBehaviour:
