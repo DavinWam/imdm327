@@ -338,7 +338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_Name
-      value: FMSynth_Pad (2)
+      value: QuarterNoteSynth
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_IsActive
@@ -417,6 +417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8133873c265614d944ca9dd61748e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxSynthCount: 4
   wholeNoteSynth: {fileID: 780649895}
   halfNoteSynth: {fileID: 618818727}
   quarterNoteSynth: {fileID: 587595977}
@@ -606,7 +607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_Name
-      value: FMSynth_Pad (3)
+      value: EighthNoteSynth
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_IsActive
@@ -898,7 +899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_Name
-      value: FMSynth_Pad (1)
+      value: HalfNoteSynth
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_IsActive
@@ -991,7 +992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_Name
-      value: FMSynth_Pad
+      value: WholeNoteSynth
       objectReference: {fileID: 0}
     - target: {fileID: 5664067727318609965, guid: 1bd9d74eee6ad2047977d2641a1300b3, type: 3}
       propertyPath: m_IsActive

@@ -15,7 +15,6 @@ public class FMSynth : MonoBehaviour
     }
 
     public Operator[] operators; // Array of operators (carriers and modulators)
-    public Modulator[] modulators; // Array of operators (carriers and modulators)
     public float duration = 2.0f; // Duration in seconds
 
     // Envelope parameters
@@ -27,7 +26,6 @@ public class FMSynth : MonoBehaviour
 
     public bool playOnStart = true;
     public bool noteOn = false;
-    public bool isActive = false; // Formal active/inactive state
     // Envelope state tracking
     private EnvelopeState envelopeState = EnvelopeState.Idle;
     private float envelopeTime = 0f;
@@ -50,11 +48,17 @@ public class FMSynth : MonoBehaviour
         }
     }
 
- private void OnAudioFilterRead(float[] data, int channels)
+  private void OnAudioFilterRead(float[] data, int channels)
     {
-        if (operators == null || operators.Length == 0 || !isActive)
+        if (operators == null || operators.Length == 0 || boidSoundManager == null)
         {
             return;
+        }
+
+        // Check with BoidSoundManager whether this synth can be active
+        if (!boidSoundManager.CanSynthBeActive(this))
+        {
+            return; // Don't output sound if synth is not allowed to be active
         }
 
         Operator mainOperator = operators[0];
