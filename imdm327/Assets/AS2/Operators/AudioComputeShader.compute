@@ -1,0 +1,18 @@
+
+#pragma kernel CSMain
+
+RWStructuredBuffer<float> audioDataBuffer;
+float volumeMultiplier;
+
+[numthreads(256, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint index = id.x;
+
+    // Ensure index is within bounds
+    if (index >= audioDataBuffer.Length)
+        return;
+
+    // Adjust the audio sample
+    audioDataBuffer[index] *= volumeMultiplier;
+}

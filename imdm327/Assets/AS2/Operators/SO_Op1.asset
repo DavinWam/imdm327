@@ -12,16 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41cfda8e84823504fa47168832d1dd6e, type: 3}
   m_Name: SO_Op1
   m_EditorClassIdentifier: 
-  baseFrequency: 466.16
+  baseFrequency: 261.62555
   frequencyMultiplier: 1
   volume: 1
   waveformType: 0
   quantizeToScale: 1
   modulator: {fileID: 0}
   modulationDepth: 1
-  ChorusEffect: 1
   UseLFO: 0
   lfoFrequency: 7
+  envelope:
+    attackTime: 0.02
+    decayTime: 0.35
+    sustainLevel: 0.8
+    releaseTime: 0.02
+    canInterrupt: 1
   customLfoWaveformCurve:
     serializedVersion: 2
     m_Curve:
