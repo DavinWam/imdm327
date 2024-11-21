@@ -36,6 +36,8 @@ public class Operator : ScriptableObject
         {
             waveGenerators = new List<WavePair>();
         }
+        // Debug.Log($"{this.name} awake");
+        OnValidate();
     }
 
     private void OnValidate()
@@ -43,6 +45,7 @@ public class Operator : ScriptableObject
         if (mainWaveGenerator == null)
         {
             mainWaveGenerator = new WaveGenerator();
+            //  Debug.Log($"{this.name} main");
         }
         if (waveGenerators == null)
         {

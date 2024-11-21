@@ -1,42 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class GridPlayerController : MonoBehaviour
+public class GridPlayerController : GridController
 {
-    public GridSystem gridSystem;
-    public Vector2Int currentGridPosition;
 
-    private void Start()
+
+    protected override void Start()
     {
-        // Subscribe to the grid creation finished event
-        gridSystem.OnGridCreationFinished.AddListener(OnGridCreated);
-    }
+        base.Start();
+    }   
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W)) // Move Up
-            MoveToGridPosition(currentGridPosition + Vector2Int.up);
-        if (Input.GetKeyDown(KeyCode.S)) // Move Down
-            MoveToGridPosition(currentGridPosition + Vector2Int.down);
-        if (Input.GetKeyDown(KeyCode.A)) // Move Left
-            MoveToGridPosition(currentGridPosition + Vector2Int.left);
-        if (Input.GetKeyDown(KeyCode.D)) // Move Right
-            MoveToGridPosition(currentGridPosition + Vector2Int.right);
-    }
+        if (isMoving)
+            return;
 
-    private void MoveToGridPosition(Vector2Int newPosition)
-    {
-        Panel targetPanel = gridSystem.GetPanel(newPosition);
-        if (targetPanel != null)
+        Vector2Int direction = Vector2Int.zero;
+
+        if (Input.GetKeyDown(KeyCode.W)) // Move Up
+            direction = Vector2Int.up;
+        else if (Input.GetKeyDown(KeyCode.S)) // Move Down
+            direction = Vector2Int.down;
+        else if (Input.GetKeyDown(KeyCode.A)) // Move Left
+            direction = Vector2Int.left;
+        else if (Input.GetKeyDown(KeyCode.D)) // Move Right
+            direction = Vector2Int.right;
+
+        if (direction != Vector2Int.zero)
         {
-            currentGridPosition = newPosition;
-            transform.position = targetPanel.ObjectReference.transform.position;
+            Vector2Int newPosition = currentGridPosition + direction;
+            Panel targetPanel = gridSystem.GetPanel(newPosition);
+            if (targetPanel != null)
+            {
+                StartCoroutine(MoveToGridPosition(newPosition, direction, targetPanel));
+            }
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            panel.SetSynthAbility(BassAbility); // Replace "BassAbility" with the appropriate SynthAbility instance
+            Debug.Log("SynthAbility set to BassAbility.");
+        }
+
+        // Clear SynthAbility when Spacebar is pressed
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            panel.clearSynth(); // Clear the SynthAbility
+            Debug.Log("SynthAbility cleared.");
         }
     }
 
-    private void OnGridCreated()
-    {
-        // Start at the first grid position
-        currentGridPosition = new Vector2Int(0, 0);
-        MoveToGridPosition(currentGridPosition);
-    }
 }

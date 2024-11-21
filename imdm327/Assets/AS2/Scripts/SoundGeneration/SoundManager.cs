@@ -55,6 +55,13 @@ public class SoundManager : MonoBehaviour
         // Start single playback of notes
         StartSinglePlayback();
     }
+    void Update()
+    {
+        // Remove null entries from the registeredSynths list
+        registeredSynths.RemoveAll(registration => registration.synth == null);
+
+        // Your other update logic here
+    }
 
      public SongData songData;       // Reference to SongData for notes
     private List<NoteEventInfo> songNotes; // List to hold the notes from SongData

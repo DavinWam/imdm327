@@ -1,22 +1,46 @@
+using System.Collections;
 using UnityEngine;
 
 public class FMSynth : MonoBehaviour
 {
     public Operator[] operators; // Array of operators (carriers and modulators)
     public bool playOnStart = true;
+    public bool RegisterOnStart = false;
     public bool noteOn { get; private set; } = false;
 
     private float sampleRate;
     public SoundManager soundManager;
-
+        
     void Awake()
     {
         sampleRate = AudioSettings.outputSampleRate;
-
+        // Instantiate unique copies of operators
+        InstantiateOperators();
+        
         if (playOnStart && soundManager)
         {
             soundManager.RegisterSynth(this, true);
             NoteOn();
+        }
+        if(RegisterOnStart){
+            soundManager.RegisterSynth(this,true);
+        }
+    }
+    private void InstantiateOperators()
+    {
+        if (operators == null || operators.Length == 0)
+        {
+            Debug.LogWarning("No operators assigned to FMSynth.");
+            return;
+        }
+
+        for (int i = 0; i < operators.Length; i++)
+        {
+            if (operators[i] != null)
+            {
+                // Clone the ScriptableObject
+                operators[i] = Instantiate(operators[i]);
+            }
         }
     }
     // C# Method: ProcessAudioData
@@ -82,27 +106,40 @@ public class FMSynth : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            NoteOn();
-        }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     NoteOn();
+        // }
 
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            NoteOff();
-        }
+        // if (Input.GetKeyUp(KeyCode.Space))
+        // {
+        //     NoteOff();
+        // }
     }
-
+    public float duration = -1f;
     public void NoteOn()
     {
         noteOn = true;
-        Debug.Log("Note On");
+        // Debug.Log("Note On");
+
+        // If a duration is specified, automatically trigger NoteOff after the duration
+        // if (duration > 0f)
+        // {
+        //     StopAllCoroutines(); // Stop any existing duration timer
+        //     StartCoroutine(NoteOffAfterDuration(duration));
+        // }
+    }
+
+    private IEnumerator NoteOffAfterDuration(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        NoteOff();
     }
 
     public void NoteOff()
     {
         noteOn = false;
-        Debug.Log("Note Off");
+        // Debug.Log("Note Off");
     }
 
     // Function to play a MIDI note
