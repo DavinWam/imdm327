@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Net;
 
 [CreateAssetMenu(fileName = "NewOperator", menuName = "Sound/Operator")]
 public class Operator : ScriptableObject
@@ -14,17 +15,18 @@ public class Operator : ScriptableObject
     private ENoteSharps currentNote; // Current note after quantization
     public Modulator modulator;
     public float modulationDepth = 80f;
-    public List<WavePair> waveGenerators { get; private set; }
+    public List<WavePair> noteWaveGenerators { get; private set; }
     public WaveGenerator mainWaveGenerator;
     public WaveGenerator lfoWaveGenerator; // LFO wave generator
     public bool UseLFO = false;
     [Range(0.1f, 20f)]
     public float lfoFrequency = 5f; // Default LFO frequency in Hz
-
+        // Custom LFO curve for 'custom' waveform type (used only by the LFO)
+    public AnimationCurve customLfoWaveformCurve;
     public ADSREnvelope envelope = ADSREnvelope.Default(); // Moved envelope here
 
-    // Custom LFO curve for 'custom' waveform type (used only by the LFO)
-    public AnimationCurve customLfoWaveformCurve;
+
+
 
     private void Awake()
     {
@@ -32,14 +34,14 @@ public class Operator : ScriptableObject
         {
             modulator.baseFrequency = baseFrequency;
         }
-        if (waveGenerators == null)
+        if (noteWaveGenerators == null)
         {
-            waveGenerators = new List<WavePair>();
+            noteWaveGenerators = new List<WavePair>();
         }
         // Debug.Log($"{this.name} awake");
         OnValidate();
     }
-
+    
     private void OnValidate()
     {
         if (mainWaveGenerator == null)
@@ -47,9 +49,9 @@ public class Operator : ScriptableObject
             mainWaveGenerator = new WaveGenerator();
             //  Debug.Log($"{this.name} main");
         }
-        if (waveGenerators == null)
+        if (noteWaveGenerators == null)
         {
-            waveGenerators = new List<WavePair>();
+            noteWaveGenerators = new List<WavePair>();
         }
         if (lfoWaveGenerator == null)
         {
@@ -57,21 +59,31 @@ public class Operator : ScriptableObject
         }
     }
 
-    public WaveGenerator AddWave(float frequency)
+    public WavePair AddWave(float frequency)
     {
-        WaveGenerator waveGenerator = new WaveGenerator();
-        waveGenerators.Add(new WavePair(waveGenerator, frequency, envelope));
-        return waveGenerator;
+        WavePair wp = new WavePair( frequency, envelope, noteWaveGenerators.Count+1);
+        noteWaveGenerators.Add(wp);
+        return wp;
     }
 
-    public void RemoveWave(WaveGenerator waveGenerator)
+    public void RemoveWave(WavePair wavePair)
     {
-        waveGenerators.RemoveAll(wavePair => wavePair.waveGenerator == waveGenerator);
+        noteWaveGenerators.Remove(wavePair);
+        WavePair foundWavePair = noteWaveGenerators.Find(wp => ReferenceEquals(wp, wavePair));
+        foundWavePair.Remove();
+        //noteWaveGenerators.Remove(wavePair);
     }
+    public void RemoveAllWaves()
+    {
+        foreach(WavePair wp in noteWaveGenerators){
+            wp.Remove();
+        }
+    }
+
 
     public float GetFrequencySampleValue(bool noteOn, float deltaTime)
     {
-        if ((waveGenerators == null || waveGenerators.Count == 0) && mainWaveGenerator == null)
+        if ((noteWaveGenerators == null || noteWaveGenerators.Count == 0) && mainWaveGenerator == null)
         {
             return 0f;
         }
@@ -79,32 +91,43 @@ public class Operator : ScriptableObject
         float sampleValue = 0f;
         float lfoModulation = 1f;
         float modulatedFrequency = baseFrequency;
-
-        if (quantizeToScale)
-        {
-            modulatedFrequency = GetQuantizedFrequency();
-        }
-
-        if (modulator != null)
-        {
-            float modulatorValue = modulator.GetFrequencySampleValue(noteOn,deltaTime);
-            modulatedFrequency += modulatorValue * modulationDepth;
-        }
-
-        if (lfoWaveGenerator != null && UseLFO)
-        {
-            lfoModulation = lfoWaveGenerator.GenerateSample(lfoFrequency, 1f, EWaveform.Custom);
-        }
-
-        modulatedFrequency *= lfoModulation;
-
-        // Update envelope and retrieve current amplitude
+            // Update envelope and retrieve current amplitude
         float currentAmplitude = envelope.Update(noteOn, deltaTime);
 
-        sampleValue += mainWaveGenerator.GenerateSample(modulatedFrequency, volume * currentAmplitude, waveformType);
-        foreach (WavePair wavePair in waveGenerators)
+        if(modulatedFrequency > 0){
+            if (quantizeToScale)
+            {
+                modulatedFrequency = GetQuantizedFrequency();
+            }
+
+            if (modulator != null)
+            {
+                float modulatorValue = modulator.GetFrequencySampleValue(noteOn,deltaTime);
+                modulatedFrequency += modulatorValue * modulationDepth;
+            }
+
+            if (lfoWaveGenerator != null && UseLFO)
+            {
+                lfoModulation = lfoWaveGenerator.GenerateSample(lfoFrequency, 1f, EWaveform.Custom);
+            }
+
+            modulatedFrequency *= lfoModulation;
+            sampleValue += mainWaveGenerator.GenerateSample(modulatedFrequency, volume * currentAmplitude, waveformType);
+        }
+        
+        noteWaveGenerators.RemoveAll(wavePair => wavePair.toRemove);
+        //wavePair.envelope.Update(noteOn,deltaTime)
+        // foreach (WavePair wavePair in noteWaveGenerators)
+        // {
+        //     float noteAmplitude = wavePair.envelope.Update(noteOn, deltaTime);
+        //     sampleValue += wavePair.waveGenerator.GenerateSample(wavePair.frequency, volume * currentAmplitude , waveformType);
+        // }
+        
+        for (int i = noteWaveGenerators.Count - 1; i >= 0; i--)
         {
-            sampleValue += wavePair.waveGenerator.GenerateSample(wavePair.frequency, volume * currentAmplitude, waveformType);
+            WavePair wavePair = noteWaveGenerators[i];
+            float noteAmplitude = wavePair.EnvelopeUpdate(wavePair.NoteOn, deltaTime);
+            sampleValue += wavePair.waveGenerator.GenerateSample(wavePair.frequency, volume * noteAmplitude, waveformType);
         }
 
         return sampleValue;
@@ -140,17 +163,31 @@ public struct WavePair
     public WaveGenerator waveGenerator;
     public float frequency;
     public ADSREnvelope envelope;    
-    public WavePair(WaveGenerator waveGenerator, float frequency, ADSREnvelope mainEnvelope)
+    public bool NoteOn;
+    public bool toRemove;
+    public WavePair(float frequency, ADSREnvelope mainEnvelope, float id)
     {
-        this.waveGenerator = waveGenerator;
-        this.frequency = frequency;
+        this.waveGenerator = new WaveGenerator();
+        this.frequency = frequency; 
+        this.NoteOn = true;
+        this.toRemove = false; 
 
         // Initialize the envelope with the main envelope settings
-        this.envelope = mainEnvelope;
+        this.envelope = ADSREnvelope.Default();
+        envelope.id = id;
         envelope.attackTime = mainEnvelope.attackTime;
         envelope.decayTime = mainEnvelope.decayTime;
         envelope.sustainLevel = mainEnvelope.sustainLevel;
         envelope.releaseTime = mainEnvelope.releaseTime;
-        envelope.canInterrupt = mainEnvelope.canInterrupt;
+        envelope.canInterrupt = true;
+
+        // this.envelope.Update(NoteOn, 0);
+    }
+    public void Remove(){
+        toRemove = true;
+        NoteOn = false;
+    }
+    public float EnvelopeUpdate(bool on, float deltaTime){
+        return envelope.Update(on, deltaTime);
     }
 }

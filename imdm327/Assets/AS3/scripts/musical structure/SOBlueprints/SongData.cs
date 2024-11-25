@@ -59,10 +59,13 @@ public class SongData : ScriptableObject
             if (note.CommandCode == MidiCommandCode.NoteOn)
             {
                 NoteOnEvent noe = (NoteOnEvent)note;
-                allNotes.Add(new NoteEventInfo(noe.NoteNumber, noe.AbsoluteTime, noe.NoteLength, bpm, tickRate));
+                float seconds = (noe.NoteLength / tickRate) * (60.0f / bpm);
+
+                allNotes.Add(new NoteEventInfo(noe.NoteNumber, noe.AbsoluteTime, seconds, bpm, tickRate));
             }
         }
-
+        //colllect track information
+        UpdateTrackInfo();
         // Sort allNotes by start time
         allNotes.Sort();
     }
@@ -71,4 +74,41 @@ public class SongData : ScriptableObject
     {
         return new List<NoteEventInfo>(allNotes);
     }
+    [HideInInspector]
+    public List<string> trackInfo = new List<string>();
+    public void UpdateTrackInfo()
+    {
+        trackInfo.Clear();
+
+        if (midi == null)
+        {
+            Debug.LogError("MIDI file not initialized. InitializeNotes must be called first.");
+            return;
+        }
+
+        for (int i = 0; i < midi.Events.Tracks; i++)
+        {
+            bool hasNotes = false;
+
+            foreach (MidiEvent midiEvent in midi.Events[i])
+            {
+                if (midiEvent.CommandCode == MidiCommandCode.NoteOn)
+                {
+                    hasNotes = true;
+                    break;
+                }
+            }
+
+            if (hasNotes)
+            {
+                trackInfo.Add($"Track {i + 1} (Has Notes)");
+            }
+            else
+            {
+                trackInfo.Add($"Track {i + 1} (No Notes)");
+            }
+        }
+    }
+
+
 }

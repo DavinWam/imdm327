@@ -19,7 +19,6 @@ MonoBehaviour:
   quantizeToScale: 1
   modulator: {fileID: 0}
   modulationDepth: 1
-  ChorusEffect: 1
   UseLFO: 0
   lfoFrequency: 7
   customLfoWaveformCurve:
@@ -64,3 +63,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  envelope:
+    id: 0
+    attackTime: 0.01
+    decayTime: 0.1
+    sustainLevel: 0.8
+    releaseTime: 0.01
+    canInterrupt: 1

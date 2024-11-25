@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41cfda8e84823504fa47168832d1dd6e, type: 3}
   m_Name: SO_Pad1
   m_EditorClassIdentifier: 
-  baseFrequency: 261.62555
+  baseFrequency: 198.3
   frequencyMultiplier: 1
   volume: 1
   waveformType: 0
@@ -21,12 +21,6 @@ MonoBehaviour:
   modulationDepth: 1
   UseLFO: 0
   lfoFrequency: 7
-  envelope:
-    attackTime: 0.02
-    decayTime: 0.35
-    sustainLevel: 0.8
-    releaseTime: 0.02
-    canInterrupt: 1
   customLfoWaveformCurve:
     serializedVersion: 2
     m_Curve:
@@ -69,3 +63,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  envelope:
+    id: 0
+    attackTime: 0.05
+    decayTime: 0.1
+    sustainLevel: 0.8
+    releaseTime: 0.05
+    canInterrupt: 1

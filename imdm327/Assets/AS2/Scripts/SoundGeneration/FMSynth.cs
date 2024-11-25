@@ -1,21 +1,31 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
+public enum SynthMode{
+    Midi, //plays midi notes
+    Dynamic // You're expected to turn on and off any aspect of the synth yourself
+}
 public class FMSynth : MonoBehaviour
 {
     public Operator[] operators; // Array of operators (carriers and modulators)
     public bool playOnStart = true;
     public bool RegisterOnStart = false;
+
+    //if can make sound if not then it won't
     public bool noteOn { get; private set; } = false;
 
     private float sampleRate;
     public SoundManager soundManager;
+    
+    public SynthMode mode = SynthMode.Dynamic;
         
     void Awake()
     {
         sampleRate = AudioSettings.outputSampleRate;
         // Instantiate unique copies of operators
         InstantiateOperators();
+        SwitchMode();
         
         if (playOnStart && soundManager)
         {
@@ -80,7 +90,7 @@ public class FMSynth : MonoBehaviour
             return;
         }
 
-        // Check if the synth should be active
+        // Check if the synth is allowed to be active
         bool isActive = soundManager.CanSynthBeActive(this);
 
         if (!isActive)
@@ -106,6 +116,9 @@ public class FMSynth : MonoBehaviour
 
     void Update()
     {
+        if(mode == SynthMode.Midi){
+            noteOn = true;
+        }
         // if (Input.GetKeyDown(KeyCode.Space))
         // {
         //     NoteOn();
@@ -116,20 +129,36 @@ public class FMSynth : MonoBehaviour
         //     NoteOff();
         // }
     }
-    public float duration = -1f;
+    public void SwitchMode(){
+        switch(mode){
+            case SynthMode.Midi:
+                SwitchToMidiManagement();
+                break;
+            case SynthMode.Dynamic:
+                SwitchToDynamicManagement();
+                break; 
+        }
+    }
+    public void SwitchToMidiManagement(){
+        mode = SynthMode.Midi;
+        foreach(Operator op in operators){
+            op.baseFrequency = 0;
+        }
+    }
+    public void SwitchToDynamicManagement(){
+        mode = SynthMode.Dynamic;
+        foreach(Operator op in operators){
+            op.RemoveAllWaves();
+        }
+    }
     public void NoteOn()
     {
         noteOn = true;
-        // Debug.Log("Note On");
-
-        // If a duration is specified, automatically trigger NoteOff after the duration
-        // if (duration > 0f)
-        // {
-        //     StopAllCoroutines(); // Stop any existing duration timer
-        //     StartCoroutine(NoteOffAfterDuration(duration));
-        // }
     }
-
+    public void NoteOn(float duration){
+        noteOn = true;
+        StartCoroutine(NoteOffAfterDuration(duration));
+    }
     private IEnumerator NoteOffAfterDuration(float duration)
     {
         yield return new WaitForSeconds(duration);
@@ -139,30 +168,33 @@ public class FMSynth : MonoBehaviour
     public void NoteOff()
     {
         noteOn = false;
-        // Debug.Log("Note Off");
     }
 
     // Function to play a MIDI note
-    public void PlayNote(float frequency)
-    {
+    public void PlayNote(float frequency, NoteEventInfo noteEvent)
+    {   
+        List<WavePair> pairs = new List<WavePair>();
         foreach (Operator op in operators)
         {
             // Add a WaveGenerator for the given MIDI note frequency
-            WaveGenerator waveGen = op.AddWave(frequency);
+            pairs.Add(op.AddWave(frequency));
         }
+        StartCoroutine(AutoStopNote(noteEvent.length, pairs));
     }
 
+    IEnumerator AutoStopNote(float duration, List<WavePair> pairs){
+        yield return new WaitForSeconds(duration);  
+        StopNote(pairs);
+    }
     // Function to stop a MIDI note
-    public void StopNote()
+    public void StopNote(List<WavePair>  wavePairs)
     {
         foreach (Operator op in operators)
         {
             // Remove all WaveGenerators
-            foreach (WavePair wavePair in op.waveGenerators)
-            {
-                op.RemoveWave(wavePair.waveGenerator);
-                Debug.Log("Removed wave");
-            }
+            op.RemoveWave(wavePairs[0]);
+            wavePairs.RemoveAt(0);
+            // Debug.Log("Removed wave");
         }
     }
 

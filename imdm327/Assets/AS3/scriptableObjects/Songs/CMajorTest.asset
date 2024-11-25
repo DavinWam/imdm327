@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: CMajorTest
   m_EditorClassIdentifier: 
   songName: CMajorTest4
-  keyCode: 0
+  musicalKey: 0
   offset: 0
   bpm: 120
   trackNumber: 0
   tickRate: 96
+  data: {fileID: 4900000, guid: 1f1a45ed2b98a4743b7453de53315a2c, type: 3}
+  trackInfo:
+  - Track 1 (Has Notes)

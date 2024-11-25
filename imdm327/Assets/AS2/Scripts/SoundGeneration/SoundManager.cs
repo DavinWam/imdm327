@@ -30,7 +30,10 @@ public class SoundManager : MonoBehaviour
     public FMSynth eighthNoteSynth;  // Public synth for eighth notes
 
     public bool play;
-    void Awake(){
+    public SongData songData;       // Reference to SongData for notes
+    private List<NoteEventInfo> songNotes; // List to hold the notes from SongData
+    void Awake()
+    {
         // Ensure the synths are properly assigned
         if (wholeNoteSynth == null || halfNoteSynth == null || quarterNoteSynth == null || eighthNoteSynth == null)
         {
@@ -44,7 +47,7 @@ public class SoundManager : MonoBehaviour
     }
     void Start()
     {
-        if(play == false) return;
+        if (play == false) return;
         if (songData == null)
         {
             Debug.LogError("SongData is not assigned in BoidSoundManager.");
@@ -63,10 +66,15 @@ public class SoundManager : MonoBehaviour
         // Your other update logic here
     }
 
-     public SongData songData;       // Reference to SongData for notes
-    private List<NoteEventInfo> songNotes; // List to hold the notes from SongData
+    [System.Serializable]
+    public class TrackSynthMapping
+    {
+        public string trackName;
+        public FMSynth synth;
+    }
     public void StartSinglePlayback()
     {
+        wholeNoteSynth.SwitchToMidiManagement();
         // Iterate over each note and start a coroutine to play it
         foreach (NoteEventInfo note in songNotes)
         {
@@ -83,9 +91,9 @@ public class SoundManager : MonoBehaviour
         float frequency = NoteNumberToFrequency(note.NoteNumber);
 
         // Set the frequency and play the note
-        wholeNoteSynth.operators[0].baseFrequency = frequency;
-        wholeNoteSynth.NoteOn();
-
+        //wholeNoteSynth.operators[0].baseFrequency = frequency;
+       // wholeNoteSynth.NoteOn();
+        wholeNoteSynth.PlayNote(frequency,note);
         // Calculate the note duration and wait
         // float duration = (note.EndTime - note.StartTime) * (60f / songData.bpm);
         // yield return new WaitForSeconds(duration);

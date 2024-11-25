@@ -8,7 +8,7 @@ public class GridCombatCharacter : MonoBehaviour
 {
     public GridCharacterStats stats; // Assign the SO instance here in the Inspector
     public UnityEvent onDeath; // Event for when the object is destroyed
-    public DamageEvent onDamageTaken; // Event for when the object takes damage
+    public UnityEvent<GameObject, float>  onDamageTaken; // Event for when the object takes damage
 
     public LayerMask damageLayer; // Assign the damage layer (e.g., EnemyDamage or PlayerDamage)
 

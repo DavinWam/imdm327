@@ -1,10 +1,10 @@
 using UnityEngine;
 
 [System.Serializable]
-public struct ADSREnvelope
+public class ADSREnvelope
 {
 
-
+    public float id;
     public float attackTime, decayTime, sustainLevel, releaseTime;
     
     public bool canInterrupt; //allows interuption of attack and decay
@@ -22,6 +22,7 @@ public struct ADSREnvelope
     {
         return new ADSREnvelope()
         {
+            id = 0,
             attackTime = 1,
             decayTime = 1,
             sustainLevel = 0.5f,
@@ -65,6 +66,7 @@ public struct ADSREnvelope
             if (isOn)
             {
                 State = EnvelopeState.Attack;
+                // Debug.Log($"start: {id} {State}");
             }
             else if (canInterrupt && State != EnvelopeState.Idle)
             {
@@ -120,6 +122,7 @@ public struct ADSREnvelope
         if (State != EnvelopeState.Idle)
         {
             time += dt;
+            // Debug.Log($"{id}: {time}");
         }
 
         wasOnLastUpdate = isOn;
