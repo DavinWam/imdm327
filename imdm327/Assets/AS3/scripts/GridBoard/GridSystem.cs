@@ -14,11 +14,16 @@ public class GridSystem : MonoBehaviour
     private Vector2 cellSize; // Size of each cell based on sprite
     [HideInInspector]
     public Panel[,] gridPanels;
+    
+    [HideInInspector]
+    public bool init {get; private set;}
 
     private void Start()
     {
+        init = false;
         CalculateCellSize();
         CreateGrid();
+
     }
 
     private void CalculateCellSize()
@@ -73,6 +78,7 @@ public class GridSystem : MonoBehaviour
             }
         }
 
+        init = true;
         // Trigger the event to signal grid creation is complete
         OnGridCreationFinished?.Invoke();
     }

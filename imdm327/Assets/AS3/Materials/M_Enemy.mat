@@ -8,25 +8,28 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Enemy
-  m_Shader: {fileID: -6465566751694194690, guid: 07d00e616b844664295d680fe7a0d9a9, type: 3}
+  m_Shader: {fileID: 4800000, guid: 13c02b14c4d048fa9653293d54f6e0e1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _ALPHATEST_ON
   - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -49,6 +52,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - PixelSnap: 0
     - _AlphaClip: 1
     - _AlphaToMask: 0
     - _Blend: 0
@@ -57,6 +61,7 @@ Material:
     - _Cull: 0
     - _DstBlend: 10
     - _EdgeAlpha: 1
+    - _EnableExternalAlpha: 0
     - _Float: 1
     - _InnerWidth: 0
     - _OuterEdge: 1
@@ -74,9 +79,11 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 0.9056604, g: 0.4243503, b: 0.4243503, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlow: {r: 0.05490198, g: 1.2153267, b: 1.4980392, a: 1}
     - _OuterColor: {r: 0, g: 802.7323, b: 879.0943, a: 1}
     - _OuterGlow: {r: 2.6052969, g: 2.6052969, b: 2.6052969, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3897100934569968839
 MonoBehaviour:

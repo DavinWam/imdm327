@@ -14,9 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   synthType: 0
   damage: 20
+  hitstop: 0.1
   owner: {fileID: 0}
   synthPrefab: {fileID: 8512561337165745148, guid: c1ab866f8ccf7454f8d0d0c7cdbcd92a, type: 3}
   abilityDuration: 0.2
+  projectilePrefab: {fileID: 0}
+  useProjectile: 0
+  isTracking: 0
+  targetTag: 
+  projectileSpeed: 5
+  lifetime: 4
   animator: {fileID: 0}
   animationClip: {fileID: 0}
-  animation: 
+  animationName: BassAbility

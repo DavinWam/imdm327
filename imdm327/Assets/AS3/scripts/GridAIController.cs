@@ -11,19 +11,26 @@ public class GridAIController : GridController
     public float abilityPlacementChance = 0.5f; // Chance to place an ability (0 to 1)
 
     private int placedBeats = 0; // Tracks the number of placed beats
-    public Beat beat;
+    public Beat beat { get; private set; }
     private Coroutine aiRoutine;
 
     protected override void Start()
     {
+        playerController = FindObjectOfType<GridPlayerController>();
         if (playerController == null)
         {
             Debug.LogError("PlayerController is not assigned.");
             return;
         }
+       
+        beat = FindObjectOfType<Beat>();
         base.Start();
-    }
 
+        
+    }
+    protected void Awake(){
+        Start();
+    }
     private IEnumerator AIBehavior()
     {
         while (true)
@@ -110,39 +117,24 @@ public class GridAIController : GridController
     }
 
 
-    private IEnumerator MoveToGridPosition(Vector2Int newPosition, Panel targetPanel)
-    {
-        isMoving = true;
-        panel.ClearCharacter();
 
-        Vector3 startPosition = transform.position;
-        Vector3 endPosition = gridSystem.GetWorldPosition(newPosition);
-        float elapsedTime = 0f;
-
-        while (elapsedTime < moveDuration)
-        {
-            transform.position = Vector3.Lerp(startPosition, endPosition, elapsedTime / moveDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.position = endPosition;
-        currentGridPosition = newPosition;
-        isMoving = false;
-        targetPanel.SetCharacter(this);
-        panel = targetPanel;
-    }
 
     protected override void OnGridCreated()
     {
         base.OnGridCreated();
         if (onlyPlaceAttack)
         {
-            panel.SetSynthAbility(BassAbility);
+           StartCoroutine(delayPlace());
         }
         else
         {
             aiRoutine = StartCoroutine(AIBehavior());
         }
     }
+    
+    IEnumerator delayPlace(){
+        yield return new WaitForSeconds(3f);
+         panel.SetSynthAbility(BassAbility);
+    }
+
 }

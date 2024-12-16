@@ -72,17 +72,41 @@ public class SoundManager : MonoBehaviour
         public string trackName;
         public FMSynth synth;
     }
+    public AudioSource audioSource;
     public void StartSinglePlayback()
     {
         wholeNoteSynth.SwitchToMidiManagement();
+        StartCoroutine(PlayFirstNote(songNotes[0]));
         // Iterate over each note and start a coroutine to play it
-        foreach (NoteEventInfo note in songNotes)
-        {
-            StartCoroutine(PlayNoteCoroutine(note));
+        int index = 1;      
+        foreach (NoteEventInfo note in songNotes.Skip(1)) // Skip the first note
+        {   
+            StartCoroutine(PlayNoteCoroutine(note, ++index));
         }
     }
 
-    IEnumerator PlayNoteCoroutine(NoteEventInfo note)
+    IEnumerator Loop(float delay){
+        yield return new WaitForSeconds(delay);
+        StartSinglePlayback();
+    }
+    IEnumerator PlayFirstNote(NoteEventInfo note)
+    {
+        // Wait until the start time of the note
+        yield return new WaitForSeconds(note.StartTime);
+        
+        // Convert the MIDI note number to frequency
+        float frequency = NoteNumberToFrequency(note.NoteNumber);
+
+
+        
+        wholeNoteSynth.PlayNote(frequency,note);
+
+        audioSource.Play();
+        // Log note playback for debugging
+        Debug.Log($"Playing note: {note.NoteNumber}/pitch: {frequency} at {note.StartTime} for {note.length} seconds");
+    }
+ 
+    IEnumerator PlayNoteCoroutine(NoteEventInfo note, int index)
     {
         // Wait until the start time of the note
         yield return new WaitForSeconds(note.StartTime);
@@ -103,6 +127,9 @@ public class SoundManager : MonoBehaviour
 
         // Log note playback for debugging
         Debug.Log($"Playing note: {note.NoteNumber}/pitch: {frequency} at {note.StartTime} for {note.length} seconds");
+        if(index == songNotes.Count){
+            StartCoroutine(Loop(note.length));
+        }
     }
 
     float NoteNumberToFrequency(int noteNumber)

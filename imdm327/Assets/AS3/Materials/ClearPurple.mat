@@ -50,7 +50,7 @@ Material:
     - _WhiteBlend: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _MaskColor: {r: 0.7987421, g: 0, b: 0.76215994, a: 0}
+    - _MaskColor: {r: 1.4980392, g: 0, b: 1.4294295, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &7303041739282990172
 MonoBehaviour:

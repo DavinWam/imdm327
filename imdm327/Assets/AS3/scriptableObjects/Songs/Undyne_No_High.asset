@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9592e882579ce745a9e8072a72c801a, type: 3}
+  m_Name: Undyne_No_High
+  m_EditorClassIdentifier: 
+  songName: UndertaleSpearOfJustice
+  musicalKey: 0
+  offset: 0
+  bpm: 127
+  trackNumber: 9
+  tickRate: 96
+  data: {fileID: 4900000, guid: 7c1fe822877c8ce4594a292f6bd3aacd, type: 3}
+  trackInfo:
+  - Track 1 (No Notes)
+  - Track 2 (No Notes)
+  - Track 3 (Has Notes)
+  - Track 4 (Has Notes)
+  - Track 5 (Has Notes)
+  - Track 6 (Has Notes)
+  - Track 7 (Has Notes)
+  - Track 8 (Has Notes)
+  - Track 9 (Has Notes)
+  - Track 10 (Has Notes)
+  - Track 11 (Has Notes)
+  - Track 12 (Has Notes)
+  - Track 13 (Has Notes)

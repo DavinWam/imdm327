@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6121559329807469657}
   - component: {fileID: 1207436800017507016}
   - component: {fileID: 2623600924487705139}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4899,7 +4899,7 @@ GameObject:
   - component: {fileID: 7854539073080621354}
   - component: {fileID: 6297293259057446916}
   - component: {fileID: 2491336154698846297}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9787,7 +9787,7 @@ GameObject:
   - component: {fileID: 4003522370525924999}
   - component: {fileID: 2829606729875257974}
   - component: {fileID: 8752128852888061005}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Particle System (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14702,7 +14702,7 @@ GameObject:
   - component: {fileID: 1180596222036151787}
   - component: {fileID: 5384775620448760695}
   - component: {fileID: 2808161179688508375}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire1 Loop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19551,7 +19551,7 @@ GameObject:
   - component: {fileID: 708299413856581378}
   - component: {fileID: 9122084172504052638}
   - component: {fileID: 8303259779202601540}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: EnemyHealthText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19845,7 +19845,7 @@ GameObject:
   - component: {fileID: 2200018010298562177}
   - component: {fileID: 1012486039516451701}
   - component: {fileID: 2015526451701666273}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -19880,7 +19880,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bb8ec84c45779c4c81526c282072beb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSystem: {fileID: 0}
   currentGridPosition: {x: 3, y: 3}
   moveDuration: 0.2
   OnMoveStart:
@@ -19892,10 +19891,9 @@ MonoBehaviour:
   BassAbility: {fileID: 11400000, guid: 1281064745863dd41baae6879d8d112e, type: 2}
   playerController: {fileID: 0}
   maxPlacedBeats: 4
-  onlyPlaceAttack: 1
+  onlyPlaceAttack: 0
   delayBetweenMoves: 0.5
   abilityPlacementChance: 0.5
-  beat: {fileID: 0}
 --- !u!58 &2200018010298562177
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -20015,7 +20013,7 @@ GameObject:
   - component: {fileID: 7291299276953863801}
   - component: {fileID: 3599802217281517413}
   - component: {fileID: 6683339801740848579}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire3 Loop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24956,7 +24954,7 @@ GameObject:
   - component: {fileID: 1318693258735855049}
   - component: {fileID: 9167002137583755823}
   - component: {fileID: 7264403140308803604}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: IgniteBurst
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29790,7 +29788,7 @@ GameObject:
   - component: {fileID: 7679453361642399235}
   - component: {fileID: 7523986030388969796}
   - component: {fileID: 3569213917894898409}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire2 Loop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34629,7 +34627,7 @@ GameObject:
   - component: {fileID: 7369035058798337238}
   - component: {fileID: 5501265075702329690}
   - component: {fileID: 4210727289150491679}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Fire3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39562,11 +39560,11 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!114 &2758607796894778214
 MonoBehaviour:
@@ -39619,7 +39617,7 @@ GameObject:
   - component: {fileID: 3573961446910315032}
   - component: {fileID: 6431847958799654931}
   - component: {fileID: 6551020445604552749}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: IgniteLoop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44493,6 +44491,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DamageParticle
       objectReference: {fileID: 0}
+    - target: {fileID: 5316178630326923603, guid: 997612d9c6f979a4389d2cee31ec174d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -44523,4 +44525,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc2f786d1ea3064448cf51c6f3e4279e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  character: {fileID: 1012486039516451701}

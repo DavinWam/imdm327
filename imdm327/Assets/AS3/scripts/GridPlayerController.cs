@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,9 +8,16 @@ public class GridPlayerController : GridController
 {
 
 
+    public SynthAbility SineAbility;
     protected override void Start()
     {
-        base.Start();
+       
+        if(SineAbility != null){
+            SineAbility.owner = gameObject;
+            SineAbility.animator = GetComponentInChildren<Animator>();
+         }
+         base.Start();
+
     }   
 
     private void Update()
@@ -44,6 +52,12 @@ public class GridPlayerController : GridController
             panel.SetSynthAbility(BassAbility); // Replace "BassAbility" with the appropriate SynthAbility instance
             Debug.Log("SynthAbility set to BassAbility.");
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            panel.SetSynthAbility(SineAbility); // Replace "BassAbility" with the appropriate SynthAbility instance
+            Debug.Log("SynthAbility set to BassAbility.");
+        }
+
 
         // Clear SynthAbility when Spacebar is pressed
         if (Input.GetKeyDown(KeyCode.Space))

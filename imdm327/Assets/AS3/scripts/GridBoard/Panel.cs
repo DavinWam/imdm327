@@ -36,10 +36,15 @@ public class Panel : MonoBehaviour
     }
 
     [Header("Colors for Synth Types")]
+    [ColorUsageAttribute(true,true)]
     public Color bassColor = new Color(0.29f, 0.00f, 0.51f);   // Deep Purple
+    [ColorUsageAttribute(true,true)]
     public Color leadColor = new Color(1.00f, 0.27f, 0.00f);   // Bright Red
+    [ColorUsageAttribute(true,true)]
     public Color padColor = new Color(0.27f, 0.51f, 0.71f);    // Soft Blue
+    [ColorUsageAttribute(true,true)]
     public Color rhythmColor = new Color(1.00f, 0.84f, 0.00f); // Golden Yellow
+    [ColorUsageAttribute(true,true)]
     public Color effectsColor = new Color(0.20f, 0.80f, 0.20f); // Vibrant Green
 
     private SpriteRenderer childSpriteRenderer;
@@ -94,10 +99,16 @@ public class Panel : MonoBehaviour
 
     public void TriggerBeat()
     {
+
         OnBeat?.Invoke();
         animator.SetTrigger("Beat");
         if(SynthAbilitySlot && SynthAbilitySlot.owner !=null){
-            SynthAbilitySlot.TryAbility();
+            if(SynthAbilitySlot.owner == null){
+                clearSynth();
+            }else{
+                SynthAbilitySlot.TryAbility();
+            }
+            
         }
     }
 

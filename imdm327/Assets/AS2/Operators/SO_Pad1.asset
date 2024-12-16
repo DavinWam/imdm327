@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseFrequency: 198.3
   frequencyMultiplier: 1
-  volume: 1
+  volume: 0.7
   waveformType: 0
   quantizeToScale: 1
   modulator: {fileID: 0}

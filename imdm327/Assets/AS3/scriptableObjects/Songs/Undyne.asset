@@ -15,7 +15,20 @@ MonoBehaviour:
   songName: UndertaleSpearOfJustice
   musicalKey: 0
   offset: 0
-  bpm: 80
-  trackNumber: 4
+  bpm: 127
+  trackNumber: 8
   tickRate: 1024
   data: {fileID: 4900000, guid: 2a99e71d13980ef49b15a27329c48f19, type: 3}
+  trackInfo:
+  - Track 1 (No Notes)
+  - Track 2 (Has Notes)
+  - Track 3 (Has Notes)
+  - Track 4 (Has Notes)
+  - Track 5 (Has Notes)
+  - Track 6 (Has Notes)
+  - Track 7 (Has Notes)
+  - Track 8 (Has Notes)
+  - Track 9 (Has Notes)
+  - Track 10 (Has Notes)
+  - Track 11 (Has Notes)
+  - Track 12 (Has Notes)

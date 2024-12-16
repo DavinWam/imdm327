@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -22,6 +23,7 @@ public class GridCombatCharacter : MonoBehaviour
 
         // Restore health on awake
         stats.currentHealth = stats.maxHealth;
+        stats = Instantiate(stats);
     }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -37,7 +39,7 @@ public class GridCombatCharacter : MonoBehaviour
                     float damage = synthAbility.damage;
 
                     // Apply damage
-                    TakeDamage(other.gameObject, damage);
+                    TakeDamage(other.gameObject, damage,synthAbility.hitstop);
                 }
             }
         }
@@ -45,7 +47,7 @@ public class GridCombatCharacter : MonoBehaviour
 
 
 
-    public void TakeDamage(GameObject attacker, float damage)
+    public void TakeDamage(GameObject attacker, float damage, float hitstop)
     {
         if (stats == null)
             return;
@@ -56,14 +58,36 @@ public class GridCombatCharacter : MonoBehaviour
 
         // Invoke the damage taken event
         onDamageTaken?.Invoke(attacker, damage);
-
-        // Check if health is 0 or less
+        
+        // Trigger hitstop effect
+        StartCoroutine(ApplyHitstop(hitstop));
+        //does death check after hitstop ends
+    }
+    public void ResolveDamage(){
         if (stats.currentHealth <= 0)
         {
             Die();
         }
     }
+    public void Heal(float amount){
+        stats.Heal(amount);
+    }    
+    private IEnumerator ApplyHitstop(float duration)
+    {
+        // Cache original timescale
+        float originalTimeScale = Time.timeScale;
 
+        // Set timescale to 0 for the hitstop duration
+        // Time.timeScale = 0;
+
+        // Wait for the hitstop duration in real time (ignores Time.timeScale)
+        yield return new WaitForSecondsRealtime(duration);
+
+        // Restore original timescale
+        Time.timeScale = originalTimeScale;
+        ResolveDamage();
+    }
+    
     private void Die()
     {
         Debug.Log($"{gameObject.name} has died.");

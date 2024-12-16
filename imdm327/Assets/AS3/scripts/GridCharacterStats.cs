@@ -12,4 +12,11 @@ public class GridCharacterStats : ScriptableObject
     {
         currentHealth = maxHealth;
     }
+    public void Heal(float amount){
+        currentHealth += amount;
+        if (currentHealth>maxHealth){
+            currentHealth = maxHealth;
+        }   
+    }  
+
 }
