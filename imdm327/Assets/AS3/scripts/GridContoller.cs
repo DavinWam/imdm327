@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-
+[RequireComponent(typeof(GridCombatCharacter))]
 public class GridController : MonoBehaviour
 {
     public enum CharacterType{
@@ -15,6 +15,7 @@ public class GridController : MonoBehaviour
     public Vector2Int currentGridPosition;
     public float moveDuration = 0.5f; // Time to move to the next grid
 
+    public GridCombatCharacter CombatCharacter { get; protected set; }
     public UnityEvent<Vector2Int> OnMoveStart; // Event with direction
     public UnityEvent OnMoveEnd;
     public SynthAbility BassAbility;
@@ -23,7 +24,7 @@ public class GridController : MonoBehaviour
     protected virtual void Start()
     
     {
-
+        CombatCharacter = gameObject.GetComponent<GridCombatCharacter>();
         FindGrid();
         if (isMoving)
         if (gridSystem == null)

@@ -58,7 +58,7 @@ public class GridAIController : GridController
             {
                 if (Random.value <= abilityPlacementChance)
                 {
-                    panel.SetSynthAbility(BassAbility);
+                    panel.SetSynthAbility(BassAbility,CombatCharacter);
                     placedBeats++;
                 }
             }
@@ -134,7 +134,7 @@ public class GridAIController : GridController
     
     IEnumerator delayPlace(){
         yield return new WaitForSeconds(3f);
-         panel.SetSynthAbility(BassAbility);
+         panel.SetSynthAbility(BassAbility,CombatCharacter);
     }
 
 }

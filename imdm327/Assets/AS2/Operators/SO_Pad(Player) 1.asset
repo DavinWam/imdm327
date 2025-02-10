@@ -19,7 +19,7 @@ MonoBehaviour:
   quantizeToScale: 1
   modulator: {fileID: 0}
   modulationDepth: 1
-  UseLFO: 0
+  UseLFO: 1
   lfoFrequency: 7
   customLfoWaveformCurve:
     serializedVersion: 2

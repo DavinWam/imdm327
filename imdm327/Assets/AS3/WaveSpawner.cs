@@ -46,22 +46,38 @@ public class EnemyWaveSpawner : MonoBehaviour
             Debug.LogError("No waves defined in the WaveSpawner.");
         }
     }
+    public int firstWaveIndex = 0; // Index for the first wave
+    public int mod5WaveIndex = 1;  // Index for every 5th wave
+    public int mod6WaveIndex = 2;  // Index for every 6th wave
+
     private IEnumerator SpawnWaveCoroutine()
     {
-            WaveEnd.Invoke();
-            // Wait for the animation delay
-            yield return new WaitForSeconds(transitionAnimation.length);
-            // Pick a random wave index
-            int randomWaveIndex = Random.Range(0, waves.Count);
+        WaveEnd.Invoke();
+        yield return new WaitForSeconds(transitionAnimation.length);
 
-            // Spawn the selected wave
-            SpawnWave(waves[randomWaveIndex]);
+        int waveIndex;
 
-            // Wait for all enemies in the current wave to be destroyed
-            yield return null;
+        if (currentWave == 1)
+        {
+            waveIndex = firstWaveIndex; // First wave
+        }
+        else if (currentWave % 5 == 0)
+        {
+            waveIndex = mod5WaveIndex; // Every 5th wave
+        }
+        else if (currentWave % 6 == 0)
+        {
+            waveIndex = mod6WaveIndex; // Every 6th wave
+        }
+        else
+        {
+            waveIndex = Random.Range(0, waves.Count); // Random wave
+        }
 
-        
+        waveIndex = Mathf.Clamp(waveIndex, 0, waves.Count - 1); // Ensure valid index
+        SpawnWave(waves[waveIndex]);
     }
+
 
 
     private void SpawnWave(Wave wave)

@@ -8,7 +8,7 @@ public class Operator : ScriptableObject
     [Range(1, 5000)]
     public float baseFrequency; // Base frequency of the operator
     public float frequencyMultiplier; // Frequency multiplier
-    [Range(0, 1)]
+    [Range(0, 5)]
     public float volume; // Volume/Amplitude
     public EWaveform waveformType; // Type of waveform
     public bool quantizeToScale; // Whether to quantize the frequency

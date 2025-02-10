@@ -5,12 +5,27 @@ public class Panel : MonoBehaviour
 {
     public Vector2Int GridPosition { get; private set; }
     public GridController CharacterSlot { get; private set; }
+    public GridCombatCharacter CombatCharacter { get; private set; }
     public SynthAbility SynthAbilitySlot { get; private set; }
     public GameObject ObjectReference { get; private set; }
     public UnityEvent OnBeat; // Event triggered on each beat
     public Animator animator;
     public ESynthType allowedSynth;
+    
      Color OriginalColor;
+    [Header("Colors for Synth Types")]
+    [ColorUsageAttribute(true,true)]
+    public Color bassColor = new Color(0.29f, 0.00f, 0.51f);   // Deep Purple
+    [ColorUsageAttribute(true,true)]
+    public Color leadColor = new Color(1.00f, 0.27f, 0.00f);   // Bright Red
+    [ColorUsageAttribute(true,true)]
+    public Color padColor = new Color(0.27f, 0.51f, 0.71f);    // Soft Blue
+    [ColorUsageAttribute(true,true)]
+    public Color rhythmColor = new Color(1.00f, 0.84f, 0.00f); // Golden Yellow
+    [ColorUsageAttribute(true,true)]
+    public Color effectsColor = new Color(0.20f, 0.80f, 0.20f); // Vibrant Green
+
+    private SpriteRenderer childSpriteRenderer;
     public void Initialize(Vector2Int gridPosition, GameObject objectReference)
     {
         ObjectReference = objectReference;
@@ -35,23 +50,15 @@ public class Panel : MonoBehaviour
         CharacterSlot = character;
     }
 
-    [Header("Colors for Synth Types")]
-    [ColorUsageAttribute(true,true)]
-    public Color bassColor = new Color(0.29f, 0.00f, 0.51f);   // Deep Purple
-    [ColorUsageAttribute(true,true)]
-    public Color leadColor = new Color(1.00f, 0.27f, 0.00f);   // Bright Red
-    [ColorUsageAttribute(true,true)]
-    public Color padColor = new Color(0.27f, 0.51f, 0.71f);    // Soft Blue
-    [ColorUsageAttribute(true,true)]
-    public Color rhythmColor = new Color(1.00f, 0.84f, 0.00f); // Golden Yellow
-    [ColorUsageAttribute(true,true)]
-    public Color effectsColor = new Color(0.20f, 0.80f, 0.20f); // Vibrant Green
 
-    private SpriteRenderer childSpriteRenderer;
-  public void SetSynthAbility(SynthAbility synthAbility)
+  public void SetSynthAbility(SynthAbility synthAbility, GridCombatCharacter gridCombatCharacter)
 {
     SynthAbilitySlot = synthAbility;
+    CombatCharacter = gridCombatCharacter;
+    
+    if(!CombatCharacter) return;
 
+    CombatCharacter.onDeath.AddListener(clearSynth);
     if (SynthAbilitySlot == null)
     {
         Debug.LogWarning("No SynthAbility assigned!");
@@ -130,6 +137,7 @@ public class Panel : MonoBehaviour
         {
             // Destroy(SynthAbilitySlot);
             SynthAbilitySlot = null;
+            CombatCharacter = null;
         }
     }
     void Update()

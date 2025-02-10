@@ -14,19 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseFrequency: 293.66
   frequencyMultiplier: 1
-  volume: 1
+  volume: 2
   waveformType: 0
   quantizeToScale: 1
   modulator: {fileID: 0}
   modulationDepth: 1
   UseLFO: 1
   lfoFrequency: 7
-  envelope:
-    attackTime: 0.05
-    decayTime: 0.05
-    sustainLevel: 0.8
-    releaseTime: 0.05
-    canInterrupt: 1
   customLfoWaveformCurve:
     serializedVersion: 2
     m_Curve:
@@ -69,3 +63,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  envelope:
+    id: 0
+    attackTime: 0.05
+    decayTime: 0.05
+    sustainLevel: 0.8
+    releaseTime: 0.05
+    canInterrupt: 1

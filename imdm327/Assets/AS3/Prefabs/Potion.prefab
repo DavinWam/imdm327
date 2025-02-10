@@ -9973,6 +9973,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   synthAbility: {fileID: 11400000, guid: 1281064745863dd41baae6879d8d112e, type: 2}
+  trackingSpeed: 5
 --- !u!1 &2603765791981610271
 GameObject:
   m_ObjectHideFlags: 0
@@ -14864,6 +14865,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   BassAbility: {fileID: 0}
+  t: 1
 --- !u!58 &8098981879481750448
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -14915,9 +14917,9 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 6104182696843394635}
         m_TargetAssemblyTypeName: GridCombatCharacter, Assembly-CSharp
-        m_MethodName: Heal
+        m_MethodName: HealPlayer
         m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

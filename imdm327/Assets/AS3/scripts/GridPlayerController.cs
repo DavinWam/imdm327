@@ -49,12 +49,12 @@ public class GridPlayerController : GridController
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            panel.SetSynthAbility(BassAbility); // Replace "BassAbility" with the appropriate SynthAbility instance
+            panel.SetSynthAbility(BassAbility,CombatCharacter); // Replace "BassAbility" with the appropriate SynthAbility instance
             Debug.Log("SynthAbility set to BassAbility.");
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            panel.SetSynthAbility(SineAbility); // Replace "BassAbility" with the appropriate SynthAbility instance
+            panel.SetSynthAbility(SineAbility,CombatCharacter); // Replace "BassAbility" with the appropriate SynthAbility instance
             Debug.Log("SynthAbility set to BassAbility.");
         }
 

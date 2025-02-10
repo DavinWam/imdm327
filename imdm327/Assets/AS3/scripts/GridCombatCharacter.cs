@@ -10,9 +10,9 @@ public class GridCombatCharacter : MonoBehaviour
     public GridCharacterStats stats; // Assign the SO instance here in the Inspector
     public UnityEvent onDeath; // Event for when the object is destroyed
     public UnityEvent<GameObject, float>  onDamageTaken; // Event for when the object takes damage
-
+    public UnityEvent<GameObject, float>  onHeal; // Event for when the object takes damage
     public LayerMask damageLayer; // Assign the damage layer (e.g., EnemyDamage or PlayerDamage)
-
+    private GameObject Player;
     private void Awake()
     {
         if (stats == null)
@@ -20,7 +20,7 @@ public class GridCombatCharacter : MonoBehaviour
             Debug.LogError($"HealthData not assigned to {gameObject.name}");
             return;
         }
-
+        Player = GameObject.FindGameObjectWithTag("Player");
         // Restore health on awake
         stats.currentHealth = stats.maxHealth;
         stats = Instantiate(stats);
@@ -71,7 +71,12 @@ public class GridCombatCharacter : MonoBehaviour
     }
     public void Heal(float amount){
         stats.Heal(amount);
+        onHeal?.Invoke(gameObject, amount);
     }    
+    public void HealPlayer(float amount){
+        Player.GetComponent<GridCombatCharacter>().Heal(amount);
+        Debug.Log(Player.name + "| healing: " + amount);
+    }
     private IEnumerator ApplyHitstop(float duration)
     {
         // Cache original timescale
